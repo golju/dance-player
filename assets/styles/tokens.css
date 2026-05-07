@@ -1,80 +1,117 @@
 /**
- * Dance cue player — tokens (warm stage / soft spotlight).
+ * Dance Player — blue ↔ mist ↔ orange (reference gradient + grain).
  */
 
 :root {
-  --palette-deep: #141016;
-  --palette-ink: #2a242c;
-  --palette-muted: #6b6370;
-  --palette-soft: #e8e2dc;
-  --palette-card: rgba(255, 252, 248, 0.92);
+  /* Core ink (high contrast on frosted cards) */
+  --palette-deep: #0f172a;
+  --palette-ink: #1e293b;
+  --palette-muted: #64748b;
+  --palette-soft: #e2e8f0;
+  --palette-card: rgba(255, 255, 255, 0.82);
 
-  --accent: #14a9a8;
-  --accent-deep: #0c7580;
-  --accent-glow: rgba(20, 169, 168, 0.45);
-  --accent-soft: rgba(20, 169, 168, 0.14);
+  /* Blue = primary actions */
+  --accent: #2563eb;
+  --accent-deep: #1d4ed8;
+  --accent-glow: rgba(37, 99, 235, 0.45);
+  --accent-soft: rgba(37, 99, 235, 0.12);
 
-  --danger: #c8506e;
-  --danger-soft: rgba(200, 80, 110, 0.12);
+  /* Orange = warmth / secondary emphasis */
+  --warm: #f97316;
+  --warm-deep: #ea580c;
+  --warm-glow: rgba(249, 115, 22, 0.4);
+  --warm-soft: rgba(249, 115, 22, 0.12);
+
+  /* Stop: deep amber-coral (pairs with orange family) */
+  --danger: #c2410c;
+  --danger-soft: rgba(194, 65, 12, 0.12);
 
   --ink: var(--palette-ink);
   --ink-muted: var(--palette-muted);
   --surface: var(--palette-card);
-  --surface-border: rgba(42, 36, 44, 0.06);
-  --field-border: rgba(42, 36, 44, 0.1);
-  --btn-secondary-bg: rgba(255, 255, 255, 0.7);
-  --btn-secondary-border: rgba(42, 36, 44, 0.12);
-  --mesh-1: #e8937a;
-  --mesh-2: #c49bd4;
-  --mesh-3: #7ec8c6;
+  --surface-border: rgba(15, 23, 42, 0.08);
+  --field-border: rgba(15, 23, 42, 0.12);
+  --btn-secondary-bg: rgba(255, 255, 255, 0.72);
+  --btn-secondary-border: rgba(15, 23, 42, 0.12);
 
-  --bg: linear-gradient(160deg, #f0ebe4 0%, #e8e4ef 42%, #dde8ea 100%);
+  /* Mesh accents for ::before (reinforce corners) */
+  --mesh-blue: #3b82f6;
+  --mesh-orange: #fb923c;
+
+  --bg: linear-gradient(
+    135deg,
+    #2563eb 0%,
+    #60a5fa 12%,
+    #bfdbfe 28%,
+    #f8fafc 48%,
+    #ffedd5 72%,
+    #fdba74 88%,
+    #f97316 100%
+  );
 
   --radius-lg: 1.125rem;
-  --radius-xl: 1.75rem;
+  --radius-xl: 1.875rem;
+  --radius-pill: 624.9375rem;
 
-  --shadow-soft: 0 10px 40px rgba(20, 16, 24, 0.08),
-    0 2px 12px rgba(20, 16, 24, 0.04);
+  --shadow-soft: 0 12px 40px rgba(15, 23, 42, 0.12),
+    0 2px 12px rgba(249, 115, 22, 0.06);
 
   --font-sans: 'DM Sans', 'Inter', system-ui, sans-serif;
+  --font-display: 'Outfit', var(--font-sans);
 
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* Film grain strength (see main.css body::after) */
+  --noise-opacity: 0.18;
 
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --palette-deep: #f4f0ea;
-    --palette-ink: #e8e2dc;
-    --palette-muted: #9a928b;
-    --palette-soft: #2a2624;
-    --palette-card: rgba(28, 26, 32, 0.88);
+    --palette-deep: #f1f5f9;
+    --palette-ink: #e2e8f0;
+    --palette-muted: #94a3b8;
+    --palette-soft: #1e293b;
+    --palette-card: rgba(15, 23, 42, 0.78);
 
-    --accent: #2dd4c8;
-    --accent-deep: #14a9a8;
-    --accent-glow: rgba(45, 212, 200, 0.35);
-    --accent-soft: rgba(45, 212, 200, 0.12);
+    --accent: #60a5fa;
+    --accent-deep: #3b82f6;
+    --accent-glow: rgba(96, 165, 250, 0.35);
+    --accent-soft: rgba(96, 165, 250, 0.14);
 
-    --danger: #f4729a;
-    --danger-soft: rgba(244, 114, 154, 0.14);
+    --warm: #fb923c;
+    --warm-deep: #f97316;
+    --warm-glow: rgba(251, 146, 60, 0.35);
+    --warm-soft: rgba(251, 146, 60, 0.12);
+
+    --danger: #fdba74;
+    --danger-soft: rgba(253, 186, 116, 0.14);
 
     --ink: var(--palette-ink);
     --ink-muted: var(--palette-muted);
     --surface: var(--palette-card);
-    --surface-border: rgba(255, 255, 255, 0.08);
+    --surface-border: rgba(255, 255, 255, 0.1);
     --field-border: rgba(255, 255, 255, 0.12);
-    --btn-secondary-bg: rgba(255, 255, 255, 0.06);
-    --btn-secondary-border: rgba(255, 255, 255, 0.12);
-    --mesh-1: #7c3a5a;
-    --mesh-2: #1e4a5c;
-    --mesh-3: #2d6a5c;
+    --btn-secondary-bg: rgba(255, 255, 255, 0.08);
+    --btn-secondary-border: rgba(255, 255, 255, 0.14);
+    --mesh-blue: #1d4ed8;
+    --mesh-orange: #c2410c;
 
-    --bg: linear-gradient(165deg, #121015 0%, #1a1620 45%, #0f1818 100%);
+    --bg: linear-gradient(
+      140deg,
+      #0f172a 0%,
+      #1e3a5f 28%,
+      #1c1917 52%,
+      #431407 78%,
+      #7c2d12 100%
+    );
 
-    --shadow-soft: 0 12px 48px rgba(0, 0, 0, 0.45),
-      0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    --shadow-soft: 0 16px 48px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+
+    --noise-opacity: 0.14;
 
     color-scheme: dark;
   }
