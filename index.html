@@ -134,31 +134,33 @@
         </div>
 
         <div class="actions">
-          <button type="button" class="btn-play btn-with-ico" id="btn-play" disabled>
-            <svg
-              class="btn-ico btn-ico--play"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path d="M8 5v14l11-7L8 5z" />
-            </svg>
-            <span data-i18n="btn_play">Play</span>
-          </button>
-          <button type="button" class="btn-pause btn-with-ico" id="btn-pause" disabled>
-            <svg
-              class="btn-ico"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path d="M7 5h3v14H7V5zm7 0h3v14h-3V5z" />
-            </svg>
-            <span data-i18n="btn_pause">Pause</span>
+          <button type="button" class="btn-play-pause btn-with-ico" id="btn-play-pause" disabled data-mode="play">
+            <span class="btn-play-pause__face btn-play-pause__face--play">
+              <svg
+                class="btn-ico btn-ico--play"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M8 5v14l11-7L8 5z" />
+              </svg>
+              <span data-i18n="btn_play">Play</span>
+            </span>
+            <span class="btn-play-pause__face btn-play-pause__face--pause">
+              <svg
+                class="btn-ico"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M7 5h3v14H7V5zm7 0h3v14h-3V5z" />
+              </svg>
+              <span data-i18n="btn_pause">Pause</span>
+            </span>
           </button>
           <button type="button" class="btn-stop btn-with-ico" id="btn-stop">
             <svg

@@ -14,8 +14,7 @@ const els = {
   delaySlider: document.getElementById('delay-slider'),
   delayValue: document.getElementById('delay-value'),
   startSec: document.getElementById('start-sec'),
-  play: document.getElementById('btn-play'),
-  pause: document.getElementById('btn-pause'),
+  playPause: document.getElementById('btn-play-pause'),
   stop: document.getElementById('btn-stop'),
   countdown: document.getElementById('countdown-num'),
   audio: document.getElementById('player'),
@@ -55,8 +54,11 @@ function syncActionButtons() {
   const hasSrc = !!els.audio.src;
   const counting = tick !== null;
   const playing = !els.audio.paused;
-  els.play.disabled = !hasSrc || playing || counting;
-  els.pause.disabled = !hasSrc || (!playing && !counting);
+  els.playPause.disabled = !hasSrc;
+  const showPause = playing || counting;
+  els.playPause.dataset.mode = showPause ? 'pause' : 'play';
+  const s = getStrings(getCurrentLocale());
+  els.playPause.setAttribute('aria-label', showPause ? s.btn_pause : s.btn_play);
 }
 
 /** Pixel height of one roller step (derived from `--roller-item-h`). */
@@ -496,7 +498,6 @@ function bindFile() {
       if (manualStartEditing) cancelManualStartInput();
       els.trackName.textContent = getStrings(getCurrentLocale()).track_none;
       els.trackName.removeAttribute('title');
-      els.play.disabled = true;
       els.audio.removeAttribute('src');
       setTransportVisible(false);
       resumeAfterUserPause = false;
@@ -509,7 +510,6 @@ function bindFile() {
     void els.audio.load();
     els.trackName.textContent = file.name;
     els.trackName.title = file.name;
-    els.play.disabled = false;
     resumeAfterUserPause = false;
     syncStartRollerAvailability();
     syncActionButtons();
@@ -531,7 +531,6 @@ async function beginPlay(startSec) {
   } catch {
     /* iOS может отклонить без жеста — кнопка уже жест */
   }
-  els.play.disabled = false;
   setCountdownIdle();
   syncTransport();
   syncActionButtons();
@@ -568,7 +567,6 @@ async function armPlayback() {
   const startSec = Math.round(clamp(parseFloat(els.startSec.value) || 0, 0, 360000));
 
   persist();
-  els.play.disabled = true;
   els.audio.pause();
 
   if (delaySec <= 0) {
@@ -602,7 +600,6 @@ function hardStop() {
   resumeAfterUserPause = false;
   els.audio.pause();
   els.audio.currentTime = Math.round(clamp(parseFloat(els.startSec.value) || 0, 0, 360000));
-  els.play.disabled = !els.audio.src;
   setCountdownIdle();
   syncTransport();
   syncActionButtons();
@@ -621,8 +618,10 @@ function bindControls() {
     if (els.audio.paused) syncTransport();
   });
 
-  els.play.addEventListener('click', () => void armPlayback());
-  els.pause.addEventListener('click', pausePlayback);
+  els.playPause.addEventListener('click', () => {
+    if (tick !== null || !els.audio.paused) pausePlayback();
+    else void armPlayback();
+  });
   els.stop.addEventListener('click', hardStop);
 
   els.audio.addEventListener('play', syncActionButtons);
@@ -643,7 +642,6 @@ function bindControls() {
 
   els.audio.addEventListener('ended', () => {
     resumeAfterUserPause = false;
-    els.play.disabled = !els.audio.src;
     setCountdownIdle();
     syncTransport();
     syncActionButtons();
@@ -674,7 +672,7 @@ function bindControls() {
         pausePlayback();
         return;
       }
-      if (!els.play.disabled) void armPlayback();
+      if (!els.playPause.disabled) void armPlayback();
     }
     if (e.code === 'Escape') hardStop();
   });
@@ -745,6 +743,7 @@ function refreshDynamicCopy() {
     els.trackName.removeAttribute('title');
   }
   updateTransportAria();
+  syncActionButtons();
 }
 
 function init() {
@@ -752,7 +751,7 @@ function init() {
   loadStored();
   applyLang(readStoredLang());
   clampStartSecToMax();
-  els.play.disabled = true;
+  els.playPause.disabled = true;
   setCountdownIdle();
   setTransportVisible(false);
   wireLangSelect();
