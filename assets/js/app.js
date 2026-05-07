@@ -506,6 +506,7 @@ function bindFile() {
     }
     objectUrl = URL.createObjectURL(file);
     els.audio.src = objectUrl;
+    void els.audio.load();
     els.trackName.textContent = file.name;
     els.trackName.title = file.name;
     els.play.disabled = false;
@@ -627,12 +628,16 @@ function bindControls() {
   els.audio.addEventListener('play', syncActionButtons);
   els.audio.addEventListener('pause', syncActionButtons);
 
-  els.audio.addEventListener('loadedmetadata', () => {
+  function applyAudioDuration() {
+    if (getDuration() <= 0) return;
     setTransportVisible(true);
     clampStartSecToMax();
     syncTransport();
     syncActionButtons();
-  });
+  }
+
+  els.audio.addEventListener('loadedmetadata', applyAudioDuration);
+  els.audio.addEventListener('durationchange', applyAudioDuration);
 
   els.audio.addEventListener('timeupdate', syncTransport);
 

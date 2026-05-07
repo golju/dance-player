@@ -17,12 +17,14 @@ html {
   height: 100%;
   min-height: 100%;
   min-height: -webkit-fill-available;
+  background-color: var(--canvas-fill);
 }
 
 body {
   min-height: 100svh;
   min-height: 100dvh;
   min-height: -webkit-fill-available;
+  min-height: calc(100dvh + env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: column;
   font-family: var(--font-sans);
@@ -30,6 +32,7 @@ body {
   letter-spacing: -0.02em;
   color: var(--ink);
   background: var(--bg);
+  background-color: var(--canvas-fill);
   /* Запас под статус-бар / Dynamic Island + safe-area (PWA, viewport-fit=cover) */
   padding-top: calc(1.15rem + constant(safe-area-inset-top));
   padding-top: calc(1.15rem + env(safe-area-inset-top, 0px));
@@ -47,7 +50,14 @@ body {
 body::before {
   content: '';
   position: fixed;
-  inset: -25%;
+  top: -20vh;
+  right: -15vw;
+  bottom: -20vh;
+  left: -15vw;
+  width: auto;
+  height: auto;
+  min-width: 100vw;
+  min-height: 120vh;
   z-index: -2;
   background:
     radial-gradient(ellipse 85% 70% at 0% 0%, color-mix(in srgb, var(--mesh-blue) 42%, transparent), transparent 55%),
@@ -82,12 +92,11 @@ body::after {
 }
 
 @keyframes stage-breathe {
-  0% {
-    transform: translate(0, 0) scale(1);
+  0%,
+  100% {
     filter: saturate(1);
   }
-  100% {
-    transform: translate(2%, -1.5%) scale(1.04);
+  50% {
     filter: saturate(1.08);
   }
 }
@@ -729,14 +738,15 @@ input[type='range']::-moz-range-thumb {
 
 .actions {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.9rem;
   margin-top: 0.25rem;
   flex-wrap: wrap;
 }
 
 .btn-play {
   position: relative;
-  flex: 2;
+  flex: 1.35;
+  min-width: 0;
   min-height: 3.85rem;
   border: none;
   border-radius: var(--radius-lg);
@@ -864,6 +874,7 @@ input[type='range']::-moz-range-thumb {
 
 .btn-stop {
   flex: 1;
+  min-width: 0;
   min-height: 3.85rem;
   border-radius: var(--radius-lg);
   border: 1px solid color-mix(in srgb, var(--warm-deep) 42%, var(--danger) 38%);
