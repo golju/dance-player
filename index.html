@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover"
+    />
+    <title>Старт трека — для занятий</title>
+    <meta
+      name="description"
+      content="Выбор аудиофайла, пауза перед стартом и фиксированная секунда начала."
+    />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#14a9a8" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#121015" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Старт трека" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%2314a9a8'/><path fill='white' d='M40 30 L40 70 L72 50 Z'/></svg>"
+    />
+    <link rel="stylesheet" href="assets/styles/main.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="brand">
+        <div class="brand-name">Старт трека</div>
+        <p class="brand-tag">Локальный файл · задержка · вход с нужной секунды</p>
+      </header>
+
+      <main class="card">
+        <div class="field">
+          <label class="field-label" for="audio-file">Трек</label>
+          <div class="file-row">
+            <input id="audio-file" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.webm,.flac" />
+            <button type="button" class="btn-secondary" id="pick-file-btn">
+              Выбрать файл
+            </button>
+            <span class="track-name" id="track-name"></span>
+          </div>
+        </div>
+
+        <div class="field row-2">
+          <div>
+            <label class="field-label" for="start-sec">Старт с (сек)</label>
+            <div class="num-input-wrap">
+              <input
+                id="start-sec"
+                class="num-input"
+                type="number"
+                inputmode="decimal"
+                min="0"
+                max="3600"
+                step="0.1"
+                value="0"
+              />
+            </div>
+          </div>
+          <div>
+            <label class="field-label" for="delay-slider">
+              Задержка после «Играть» — <span id="delay-value">0 сек</span>
+            </label>
+            <div class="range-wrap">
+              <input id="delay-slider" type="range" min="0" max="10" step="1" value="0" />
+              <div class="range-labels"><span>0</span><span>10 сек</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn-play" id="btn-play" disabled>Играть</button>
+          <button type="button" class="btn-stop" id="btn-stop">Стоп</button>
+        </div>
+
+        <div class="transport" id="transport" hidden>
+          <div class="transport-bar" aria-hidden="true">
+            <div class="transport-fill" id="transport-fill"></div>
+          </div>
+          <div class="transport-times">
+            <span id="time-current" class="tabular">0:00</span>
+            <span class="transport-sep">/</span>
+            <span id="time-duration" class="tabular">0:00</span>
+          </div>
+        </div>
+
+        <div class="countdown">
+          <div
+            class="countdown-num countdown-hint"
+            id="countdown-num"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            После запуска — обратный отсчёт
+          </div>
+        </div>
+      </main>
+
+      <p class="hint-foot">
+        Пробел — играть, Esc — стоп. Откройте в Safari на iPhone: «Поделиться» → «На экран Домой» — удобнее на уроке.
+      </p>
+    </div>
+
+    <audio id="player" preload="none" playsinline></audio>
+    <script type="module" src="assets/js/app.js"></script>
+  </body>
+</html>

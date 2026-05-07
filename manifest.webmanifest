@@ -1,0 +1,10 @@
+{
+  "name": "Старт трека",
+  "short_name": "Старт трека",
+  "description": "Плеер с задержкой и фиксированной точкой входа.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f0ebe4",
+  "theme_color": "#14a9a8",
+  "lang": "ru"
+}
