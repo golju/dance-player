@@ -27,7 +27,9 @@
     <div class="shell">
       <header class="brand">
         <div class="brand-name">Старт трека</div>
-        <p class="brand-tag">Локальный файл · задержка · вход с нужной секунды</p>
+        <p class="brand-tag">
+          Локальный файл · задержка · вход с нужной секунды · перемотка по полоске
+        </p>
       </header>
 
       <main class="card">
@@ -75,8 +77,20 @@
         </div>
 
         <div class="transport" id="transport" hidden>
-          <div class="transport-bar" aria-hidden="true">
-            <div class="transport-fill" id="transport-fill"></div>
+          <div
+            class="transport-track"
+            id="transport-track"
+            role="slider"
+            tabindex="0"
+            aria-label="Позиция в треке"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+            aria-valuetext=""
+          >
+            <div class="transport-bar" aria-hidden="true">
+              <div class="transport-fill" id="transport-fill"></div>
+            </div>
           </div>
           <div class="transport-times">
             <span id="time-current" class="tabular">0:00</span>
@@ -98,7 +112,8 @@
       </main>
 
       <p class="hint-foot">
-        Пробел — играть, Esc — стоп. Откройте в Safari на iPhone: «Поделиться» → «На экран Домой» — удобнее на уроке.
+        Пробел — играть, Esc — стоп. Полоска прогресса — касание или мышь для перемотки; в фокусе ← → на 5 сек.<br />
+        Откройте в Safari на iPhone: «Поделиться» → «На экран Домой» — удобнее на уроке.
       </p>
     </div>
 

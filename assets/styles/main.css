@@ -266,12 +266,32 @@ input[type='range'] {
   border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
+.transport-track {
+  --transport-hit-y: 1.35rem;
+  border-radius: 999px;
+  margin: 0 calc(-1 * 0.125rem);
+  padding: calc((var(--transport-hit-y) - 0.28rem) / 2) 0.125rem;
+  cursor: pointer;
+  touch-action: none;
+  outline: none;
+}
+
+.transport-track:focus-visible {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
+}
+
+.transport-track.is-scrubbing .transport-fill,
+.transport-track.is-scrubbing:focus-visible .transport-fill {
+  transition: none;
+}
+
 .transport-bar {
   height: 0.28rem;
   border-radius: 999px;
   background: color-mix(in srgb, var(--ink-muted) 22%, transparent);
   overflow: hidden;
   margin-bottom: 0.45rem;
+  pointer-events: none;
 }
 
 .transport-fill {

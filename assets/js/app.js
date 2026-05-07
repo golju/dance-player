@@ -17,6 +17,7 @@ const els = {
   countdown: document.getElementById('countdown-num'),
   audio: document.getElementById('player'),
   transport: document.getElementById('transport'),
+  transportTrack: document.getElementById('transport-track'),
   timeCurrent: document.getElementById('time-current'),
   timeDuration: document.getElementById('time-duration'),
   transportFill: document.getElementById('transport-fill'),
@@ -30,6 +31,9 @@ let tick = null;
 
 /** @type {number} */
 let countEndMs = 0;
+
+/** @type {boolean} */
+let isScrubbing = false;
 
 function loadStored() {
   const d = localStorage.getItem(STORAGE.DELAY_SEC);
@@ -82,18 +86,59 @@ function formatTime(seconds) {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
+function getDuration() {
+  const d = els.audio.duration;
+  return Number.isFinite(d) && d > 0 ? d : 0;
+}
+
+function updateTransportAria() {
+  const track = els.transportTrack;
+  if (!track || els.transport.hidden) return;
+  const d = getDuration();
+  const t = els.audio.currentTime;
+  if (d <= 0) {
+    track.setAttribute('aria-valuenow', '0');
+    track.setAttribute('aria-valuetext', '');
+    return;
+  }
+  const pct = clamp((t / d) * 100, 0, 100);
+  track.setAttribute('aria-valuenow', String(Math.round(pct)));
+  track.setAttribute('aria-valuetext', `${formatTime(t)} из ${formatTime(d)}`);
+}
+
 function syncTransport() {
+  if (isScrubbing) return;
   const d = els.audio.duration;
   if (!Number.isFinite(d) || d <= 0) {
     els.timeDuration.textContent = '0:00';
     els.transportFill.style.width = '0%';
     els.timeCurrent.textContent = formatTime(els.audio.currentTime);
+    updateTransportAria();
     return;
   }
   els.timeDuration.textContent = formatTime(d);
   els.timeCurrent.textContent = formatTime(els.audio.currentTime);
   const pct = clamp((els.audio.currentTime / d) * 100, 0, 100);
   els.transportFill.style.width = `${pct}%`;
+  updateTransportAria();
+}
+
+function ratioFromClientX(clientX) {
+  const track = els.transportTrack;
+  const rect = track.getBoundingClientRect();
+  const x = clamp(clientX - rect.left, 0, rect.width);
+  return rect.width > 0 ? x / rect.width : 0;
+}
+
+function seekToRatio(ratio) {
+  const d = getDuration();
+  if (d <= 0) return;
+  const r = clamp(ratio, 0, 1);
+  els.audio.currentTime = r * d;
+  els.timeDuration.textContent = formatTime(d);
+  els.timeCurrent.textContent = formatTime(els.audio.currentTime);
+  els.transportFill.style.width = `${r * 100}%`;
+  updateTransportAria();
 }
 
 function setTransportVisible(show) {
@@ -220,11 +265,64 @@ function bindControls() {
     if (e.code === 'Space') {
       const t = document.activeElement?.tagName;
       if (t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT') return;
+      if (document.activeElement === els.transportTrack) {
+        e.preventDefault();
+        return;
+      }
       e.preventDefault();
       if (!els.audio.paused) return;
       if (!els.play.disabled) void armPlayback();
     }
     if (e.code === 'Escape') hardStop();
+  });
+}
+
+function bindTransportScrub() {
+  const track = els.transportTrack;
+
+  const endScrub = () => {
+    if (!isScrubbing) return;
+    isScrubbing = false;
+    track.classList.remove('is-scrubbing');
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', endScrub);
+    window.removeEventListener('pointercancel', endScrub);
+    syncTransport();
+  };
+
+  /** @param {PointerEvent} e */
+  const onPointerMove = (e) => {
+    if (!isScrubbing) return;
+    seekToRatio(ratioFromClientX(e.clientX));
+  };
+
+  track.addEventListener('pointerdown', (e) => {
+    if (getDuration() <= 0) return;
+    if (e.button !== 0) return;
+    e.preventDefault();
+    track.focus({ preventScroll: true });
+    isScrubbing = true;
+    track.classList.add('is-scrubbing');
+    seekToRatio(ratioFromClientX(e.clientX));
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', endScrub);
+    window.addEventListener('pointercancel', endScrub);
+  });
+
+  track.addEventListener('keydown', (e) => {
+    if (getDuration() <= 0) return;
+    const d = getDuration();
+    let t = els.audio.currentTime;
+    let handled = true;
+    if (e.code === 'ArrowRight') t = clamp(t + 5, 0, d);
+    else if (e.code === 'ArrowLeft') t = clamp(t - 5, 0, d);
+    else if (e.code === 'Home') t = 0;
+    else if (e.code === 'End') t = d;
+    else handled = false;
+    if (!handled) return;
+    e.preventDefault();
+    els.audio.currentTime = t;
+    syncTransport();
   });
 }
 
@@ -237,6 +335,7 @@ function init() {
   setTransportVisible(false);
   bindFile();
   bindControls();
+  bindTransportScrub();
 }
 
 init();
