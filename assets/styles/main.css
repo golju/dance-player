@@ -16,11 +16,13 @@ html {
   -webkit-tap-highlight-color: transparent;
   height: 100%;
   min-height: 100%;
+  min-height: -webkit-fill-available;
 }
 
 body {
   min-height: 100svh;
   min-height: 100dvh;
+  min-height: -webkit-fill-available;
   display: flex;
   flex-direction: column;
   font-family: var(--font-sans);
@@ -28,7 +30,13 @@ body {
   letter-spacing: -0.02em;
   color: var(--ink);
   background: var(--bg);
-  padding: calc(var(--safe-top) + 1rem) 1rem calc(var(--safe-bottom) + 1.25rem);
+  /* Запас под статус-бар / Dynamic Island + safe-area (PWA, viewport-fit=cover) */
+  padding-top: calc(1.15rem + constant(safe-area-inset-top));
+  padding-top: calc(1.15rem + env(safe-area-inset-top, 0px));
+  padding-right: max(1.25rem, var(--safe-right));
+  padding-bottom: calc(1rem + constant(safe-area-inset-bottom));
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  padding-left: max(1.25rem, var(--safe-left));
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
@@ -88,7 +96,7 @@ body::after {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 30rem;
+  max-width: none;
   margin: 0 auto;
   flex: 1 1 auto;
   display: flex;
@@ -98,25 +106,27 @@ body::after {
 
 .brand {
   flex-shrink: 0;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
+  position: relative;
+  z-index: 1;
 }
 
 .brand-top {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.65rem;
 }
 
 .brand-copy {
-  text-align: center;
+  text-align: start;
   flex: 1;
   min-width: 0;
 }
 
 .lang-wrap {
   flex-shrink: 0;
-  padding-top: 0.15rem;
+  padding-top: 0;
 }
 
 .lang-select {
@@ -155,7 +165,7 @@ body::after {
   }
 
   .brand-copy {
-    text-align: center;
+    text-align: start;
   }
 
   .lang-wrap {
@@ -166,7 +176,7 @@ body::after {
 
 .brand-name {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 5vw, 1.85rem);
+  font-size: clamp(1.35rem, 4.5vw, 1.65rem);
   font-weight: 800;
   letter-spacing: -0.045em;
   line-height: 1.15;
@@ -184,16 +194,6 @@ body::after {
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-}
-
-.brand-tag {
-  font-size: 0.8125rem;
-  color: var(--ink-muted);
-  margin-top: 0.35rem;
-  line-height: 1.4;
-  max-width: 22rem;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .card {
@@ -268,9 +268,10 @@ body::after {
 
 .file-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 input[type='file'] {
@@ -324,15 +325,23 @@ input[type='file'] {
   box-shadow: 0 4px 16px color-mix(in srgb, var(--accent-glow) 15%, transparent);
 }
 
+.file-row .btn-secondary {
+  flex-shrink: 0;
+}
+
 .track-name {
   font-size: 0.8125rem;
   color: var(--ink-muted);
-  flex: 1 1 100%;
+  flex: 1 1 auto;
+  min-width: 0;
   padding: 0.35rem 0.65rem;
   border-radius: var(--radius-pill);
   background: color-mix(in srgb, var(--accent-soft) 35%, var(--warm-soft) 25%, transparent);
   border: 1px dashed color-mix(in srgb, var(--ink-muted) 22%, transparent);
   font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .row-2 {
@@ -342,6 +351,37 @@ input[type='file'] {
   column-gap: 0.85rem;
   row-gap: 0.35rem;
   align-items: stretch;
+}
+
+/* Явные ячейки: иначе при display:none у левого футера подписи 0 / 10 sec уезжают в первую колонку */
+.field.row-2 > label.row-2__label:first-of-type {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.field.row-2 > label.row-2__label:last-of-type {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.row-2__body--start {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.row-2__body--delay {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.row-2__foot--start {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.row-2__foot--delay {
+  grid-column: 2;
+  grid-row: 3;
 }
 
 .row-2 > .field-label {
@@ -399,6 +439,21 @@ input[type='file'] {
     0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent),
     0 1px 0 color-mix(in srgb, #fff 85%, transparent) inset,
     0 4px 14px rgba(15, 23, 42, 0.08);
+}
+
+.start-time-roller.is-roller-disabled .time-roller-frame {
+  pointer-events: none;
+  user-select: none;
+  touch-action: none;
+  opacity: 0.92;
+}
+
+.start-time-roller.is-roller-disabled .time-roller-scroll {
+  overflow: hidden;
+}
+
+.row-2__foot--start.time-roller-range.is-roller-disabled {
+  display: none;
 }
 
 .time-roller-readout-sr {
@@ -496,23 +551,23 @@ input[type='file'] {
 
 .time-roller-stack-row--prev,
 .time-roller-stack-row--next {
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-weight: 600;
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: lining-nums tabular-nums;
   font-size: 0.8rem;
-  line-height: 1.12;
-  letter-spacing: -0.02em;
+  line-height: 1.18;
+  letter-spacing: 0;
   color: color-mix(in srgb, var(--ink-muted) 82%, transparent);
   min-height: 1.08em;
 }
 
 .time-roller-stack-row--live {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-variant-numeric: lining-nums tabular-nums;
   font-size: 1.2rem;
-  line-height: 1.08;
-  letter-spacing: -0.03em;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
   color: var(--palette-deep);
   text-shadow: none;
 }
@@ -927,7 +982,7 @@ input[type='range']::-moz-range-thumb {
   container-name: countdown-stage;
   width: 100%;
   flex: 1 1 auto;
-  min-height: max(10rem, 22svh);
+  min-height: max(11rem, 26svh);
   margin-top: 1.35rem;
   margin-bottom: 0;
   padding: 1.25rem 1rem;
@@ -937,7 +992,7 @@ input[type='range']::-moz-range-thumb {
 
 .countdown-num {
   max-width: 100%;
-  font-size: clamp(3rem, min(38vmin, 28svmin), 12rem);
+  font-size: clamp(3.5rem, min(44vmin, 36svmin), 12rem);
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.045em;
@@ -952,7 +1007,7 @@ input[type='range']::-moz-range-thumb {
 
 @supports (font-size: 1cqh) {
   .countdown-num:not(.countdown-hint) {
-    font-size: clamp(3rem, min(65cqh, 38vmin, 28svmin), 12rem);
+    font-size: clamp(3.5rem, min(78cqh, 44vmin, 36svmin), 12rem);
   }
 }
 
@@ -979,9 +1034,9 @@ input[type='range']::-moz-range-thumb {
 }
 
 .countdown-num.countdown-hint {
-  font-size: clamp(0.875rem, 3.4vmin, 1.2rem);
-  font-weight: 600;
-  line-height: 1.4;
+  font-size: clamp(1.0625rem, 3.2vw + 0.65rem, 1.55rem);
+  font-weight: 700;
+  line-height: 1.35;
   color: var(--ink-muted);
   max-width: 100%;
   padding: 0 0.5rem;

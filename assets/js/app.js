@@ -33,6 +33,7 @@ const els = {
   timeRollerNext: document.getElementById('time-roller-next'),
   timeRollerReadoutSr: document.getElementById('time-roller-readout-sr'),
   timeRollerMax: document.getElementById('time-roller-max'),
+  timeRollerRange: document.getElementById('time-roller-range'),
 };
 
 /** @type {string | null} */
@@ -61,23 +62,20 @@ function syncActionButtons() {
 /** Pixel height of one roller step (derived from `--roller-item-h`). */
 let rollerItemH = 44;
 
-/** @type {{ steps: number, stepTenths: number } | null} */
+/** @type {{ steps: number, stepSec: number } | null} */
 let rollerMeta = null;
 
 const MAX_ROLLER_STEPS = 12000;
 
 function buildRollerMeta(maxSec) {
-  const maxT = Math.round(maxSec * 10);
-  if (maxT + 1 <= MAX_ROLLER_STEPS) {
-    return { steps: maxT + 1, stepTenths: 1 };
+  const cap = Math.floor(maxSec);
+  const span = cap + 1;
+  if (span <= MAX_ROLLER_STEPS) {
+    return { steps: span, stepSec: 1 };
   }
-  const whole = Math.floor(maxSec) + 1;
-  if (whole <= MAX_ROLLER_STEPS) {
-    return { steps: whole, stepTenths: 10 };
-  }
-  const stepSec = Math.ceil((maxSec / (MAX_ROLLER_STEPS - 1)) * 1000) / 1000;
+  const stepSec = Math.ceil(maxSec / (MAX_ROLLER_STEPS - 1));
   const steps = Math.min(MAX_ROLLER_STEPS, Math.floor(maxSec / stepSec) + 1);
-  return { steps, stepTenths: Math.round(stepSec * 10) };
+  return { steps, stepSec };
 }
 
 function refreshRollerMeta() {
@@ -99,13 +97,14 @@ function readRollerItemH() {
 }
 
 function idxToSec(idx, meta, max) {
-  const raw = (idx * meta.stepTenths) / 10;
-  return clamp(Math.round(raw * 10) / 10, 0, max);
+  const cap = Math.floor(max);
+  const v = idx * meta.stepSec;
+  return clamp(Math.min(v, cap), 0, cap);
 }
 
 function secToIdx(sec, meta, max) {
-  const t = Math.round(clamp(sec, 0, max) * 10);
-  const idx = Math.round(t / meta.stepTenths);
+  const s = Math.floor(clamp(sec, 0, max));
+  const idx = Math.floor(s / meta.stepSec);
   return clamp(idx, 0, meta.steps - 1);
 }
 
@@ -134,17 +133,21 @@ function endRollerSuppress() {
 
 function syncStartTimeUI() {
   const max = getStartSecMax();
-  const v = clamp(parseFloat(els.startSec.value) || 0, 0, max);
+  const v = Math.round(clamp(parseFloat(els.startSec.value) || 0, 0, max));
+  els.startSec.value = String(v);
   refreshRollerMeta();
   const meta = rollerMeta;
-  if (!meta) return;
+  if (!meta) {
+    syncStartRollerAvailability();
+    return;
+  }
 
   const lbl = formatStartReadout(v);
   els.timeRollerReadoutSr.textContent = lbl;
   els.timeRollerLive.textContent = lbl;
-  els.timeRollerMax.textContent = formatStartReadout(max);
-  els.startTimeRoller.setAttribute('aria-valuemax', String(Math.round(max * 10) / 10));
-  els.startTimeRoller.setAttribute('aria-valuenow', String(Math.round(v * 10) / 10));
+  els.timeRollerMax.textContent = formatStartReadout(Math.floor(max));
+  els.startTimeRoller.setAttribute('aria-valuemax', String(Math.floor(max)));
+  els.startTimeRoller.setAttribute('aria-valuenow', String(v));
   els.startTimeRoller.setAttribute('aria-valuetext', lbl);
 
   rollerSuppressCommit = true;
@@ -156,9 +159,11 @@ function syncStartTimeUI() {
     updateRollerStack(idx, meta, max);
     endRollerSuppress();
   });
+  syncStartRollerAvailability();
 }
 
 function onRollerScrollLive() {
+  if (getDuration() <= 0) return;
   if (rollerSuppressCommit) return;
   readRollerItemH();
   const max = getStartSecMax();
@@ -171,6 +176,7 @@ function onRollerScrollLive() {
 }
 
 function commitRollerFromScroll() {
+  if (getDuration() <= 0) return;
   if (rollerSuppressCommit) return;
   readRollerItemH();
   refreshRollerMeta();
@@ -184,9 +190,9 @@ function commitRollerFromScroll() {
   const lbl = formatStartReadout(v);
   els.timeRollerReadoutSr.textContent = lbl;
   els.timeRollerLive.textContent = lbl;
-  els.timeRollerMax.textContent = formatStartReadout(max);
-  els.startTimeRoller.setAttribute('aria-valuemax', String(Math.round(max * 10) / 10));
-  els.startTimeRoller.setAttribute('aria-valuenow', String(Math.round(v * 10) / 10));
+  els.timeRollerMax.textContent = formatStartReadout(Math.floor(max));
+  els.startTimeRoller.setAttribute('aria-valuemax', String(Math.floor(max)));
+  els.startTimeRoller.setAttribute('aria-valuenow', String(v));
   els.startTimeRoller.setAttribute('aria-valuetext', lbl);
   rollerSuppressCommit = true;
   els.timeRollerScroll.scrollTop = idx * rollerItemH;
@@ -207,11 +213,13 @@ function scheduleRollerCommit() {
 function bindStartRoller() {
   const sc = els.timeRollerScroll;
   sc.addEventListener('scroll', () => {
+    if (getDuration() <= 0) return;
     onRollerScrollLive();
     scheduleRollerCommit();
   }, { passive: true });
 
   sc.addEventListener('scrollend', () => {
+    if (getDuration() <= 0) return;
     if (rollerSuppressCommit) return;
     if (rollerCommitTimer) clearTimeout(rollerCommitTimer);
     rollerCommitTimer = null;
@@ -219,6 +227,7 @@ function bindStartRoller() {
   });
 
   sc.addEventListener('keydown', (e) => {
+    if (getDuration() <= 0) return;
     refreshRollerMeta();
     const meta = rollerMeta;
     if (!meta) return;
@@ -238,19 +247,25 @@ function bindStartRoller() {
 
 function getStartSecMax() {
   const d = getDuration();
-  return d > 0 ? Math.min(d, 360000) : 3600;
+  return d > 0 ? Math.min(d, 360000) : 0;
+}
+
+function syncStartRollerAvailability() {
+  const on = getDuration() > 0;
+  els.startTimeRoller.classList.toggle('is-roller-disabled', !on);
+  if (els.timeRollerRange) els.timeRollerRange.classList.toggle('is-roller-disabled', !on);
+  if (els.timeRollerScroll) {
+    els.timeRollerScroll.tabIndex = on ? 0 : -1;
+    if (!on && document.activeElement === els.timeRollerScroll) els.timeRollerScroll.blur();
+  }
 }
 
 function formatStartReadout(sec) {
   if (!Number.isFinite(sec) || sec < 0) return '0:00';
-  sec = Math.round(sec * 10) / 10;
+  sec = Math.round(sec);
   const m = Math.floor(sec / 60);
-  const s = sec - m * 60;
-  const whole = Math.floor(s);
-  const tenths = Math.round((s - whole) * 10);
-  let body = `${m}:${String(whole).padStart(2, '0')}`;
-  if (tenths > 0) body += `.${tenths}`;
-  return body;
+  const s = sec % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
 }
 
 /** `90`, `90.5`, `1:30`, `1:30.5` (comma as decimal allowed). */
@@ -275,7 +290,7 @@ function commitManualStartInput() {
   const max = getStartSecMax();
   const fallback = parseFloat(els.startSec.dataset.lastValid || '0') || 0;
   const parsed = parseTimeInput(els.startSec.value);
-  const v = Number.isFinite(parsed) ? clamp(parsed, 0, max) : clamp(fallback, 0, max);
+  const v = Number.isFinite(parsed) ? Math.round(clamp(parsed, 0, max)) : Math.round(clamp(fallback, 0, max));
   els.startSec.value = String(v);
   delete els.startSec.dataset.lastValid;
   manualStartEditing = false;
@@ -291,7 +306,7 @@ function cancelManualStartInput() {
   if (!manualStartEditing) return;
   const max = getStartSecMax();
   const fallback = parseFloat(els.startSec.dataset.lastValid || '0') || 0;
-  els.startSec.value = String(clamp(fallback, 0, max));
+  els.startSec.value = String(Math.round(clamp(fallback, 0, max)));
   delete els.startSec.dataset.lastValid;
   manualStartEditing = false;
   els.startTimeRoller.classList.remove('is-start-manual');
@@ -300,10 +315,11 @@ function cancelManualStartInput() {
 }
 
 function openManualStartInput() {
+  if (getDuration() <= 0) return;
   if (manualStartEditing) return;
   manualStartEditing = true;
   const max = getStartSecMax();
-  const v = clamp(parseFloat(els.startSec.value) || 0, 0, max);
+  const v = Math.round(clamp(parseFloat(els.startSec.value) || 0, 0, max));
   els.startSec.dataset.lastValid = String(v);
   els.startSec.value = formatStartReadout(v);
   els.startSec.removeAttribute('aria-hidden');
@@ -317,6 +333,10 @@ function openManualStartInput() {
 
 function bindStartManualEntry() {
   els.timeRollerFrame.addEventListener('dblclick', (e) => {
+    if (getDuration() <= 0) {
+      e.preventDefault();
+      return;
+    }
     e.preventDefault();
     openManualStartInput();
   });
@@ -336,7 +356,7 @@ function bindStartManualEntry() {
       e.preventDefault();
       e.stopPropagation();
       cancelManualStartInput();
-      els.timeRollerScroll.focus({ preventScroll: true });
+      if (getDuration() > 0) els.timeRollerScroll.focus({ preventScroll: true });
     }
   });
 }
@@ -344,7 +364,7 @@ function bindStartManualEntry() {
 function clampStartSecToMax() {
   const max = getStartSecMax();
   const raw = parseFloat(els.startSec.value);
-  const v = clamp(Number.isFinite(raw) ? raw : 0, 0, max);
+  const v = Math.round(clamp(Number.isFinite(raw) ? raw : 0, 0, max));
   if (!Number.isFinite(raw) || Math.abs(raw - v) > 0.001) els.startSec.value = String(v);
   els.startSec.setAttribute('max', String(max));
   syncStartTimeUI();
@@ -359,7 +379,7 @@ function loadStored() {
   }
   if (s !== null) {
     const x = clamp(parseFloat(s), 0, 360000);
-    if (!Number.isNaN(x)) els.startSec.value = String(x);
+    if (!Number.isNaN(x)) els.startSec.value = String(Math.round(x));
   }
 }
 
@@ -473,7 +493,9 @@ function bindFile() {
     const file = els.file.files?.[0];
     revokeUrl();
     if (!file) {
+      if (manualStartEditing) cancelManualStartInput();
       els.trackName.textContent = getStrings(getCurrentLocale()).track_none;
+      els.trackName.removeAttribute('title');
       els.play.disabled = true;
       els.audio.removeAttribute('src');
       setTransportVisible(false);
@@ -485,8 +507,10 @@ function bindFile() {
     objectUrl = URL.createObjectURL(file);
     els.audio.src = objectUrl;
     els.trackName.textContent = file.name;
+    els.trackName.title = file.name;
     els.play.disabled = false;
     resumeAfterUserPause = false;
+    syncStartRollerAvailability();
     syncActionButtons();
   });
 }
@@ -498,7 +522,8 @@ function syncDelayLabel() {
 }
 
 async function beginPlay(startSec) {
-  els.audio.currentTime = startSec;
+  const t = Math.round(clamp(startSec, 0, 360000));
+  els.audio.currentTime = t;
   resumeAfterUserPause = false;
   try {
     await els.audio.play();
@@ -517,7 +542,7 @@ function runCountdownStep() {
 
   if (Date.now() >= countEndMs) {
     clearTick();
-    const startSec = clamp(parseFloat(els.startSec.value) || 0, 0, 360000);
+    const startSec = Math.round(clamp(parseFloat(els.startSec.value) || 0, 0, 360000));
     void beginPlay(startSec);
   }
 }
@@ -539,7 +564,7 @@ async function armPlayback() {
   resumeAfterUserPause = false;
   clearTick();
   const delaySec = clamp(parseInt(els.delaySlider.value, 10), 0, 10);
-  const startSec = clamp(parseFloat(els.startSec.value) || 0, 0, 360000);
+  const startSec = Math.round(clamp(parseFloat(els.startSec.value) || 0, 0, 360000));
 
   persist();
   els.play.disabled = true;
@@ -575,7 +600,7 @@ function hardStop() {
   clearTick();
   resumeAfterUserPause = false;
   els.audio.pause();
-  els.audio.currentTime = clamp(parseFloat(els.startSec.value) || 0, 0, 360000);
+  els.audio.currentTime = Math.round(clamp(parseFloat(els.startSec.value) || 0, 0, 360000));
   els.play.disabled = !els.audio.src;
   setCountdownIdle();
   syncTransport();
@@ -710,7 +735,10 @@ function refreshDynamicCopy() {
   if (!els.countdown.classList.contains('is-ticking')) {
     els.countdown.textContent = getStrings(getCurrentLocale()).hint_countdown;
   }
-  if (!els.audio.src) els.trackName.textContent = getStrings(getCurrentLocale()).track_none;
+  if (!els.audio.src) {
+    els.trackName.textContent = getStrings(getCurrentLocale()).track_none;
+    els.trackName.removeAttribute('title');
+  }
   updateTransportAria();
 }
 

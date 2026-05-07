@@ -9,8 +9,6 @@ export const STRINGS = {
     app_short_title: 'Dance Player',
 
     brand_name: 'Dance Player',
-    brand_tag:
-      'Local file · delay · start at a chosen second · scrub the progress bar',
 
     lang_aria: 'Language',
 
@@ -21,7 +19,7 @@ export const STRINGS = {
     field_start_sec: 'Start at (sec)',
 
     start_manual_input_title:
-      'Seconds (e.g. 90 or 1.5) or m:ss(.t). Enter to apply, Esc to cancel.',
+      'Whole seconds (e.g. 90) or m:ss. Enter to apply, Esc to cancel.',
 
     delay_label_title: 'Countdown before track',
     delay_none: 'none',
@@ -46,8 +44,6 @@ export const STRINGS = {
     app_short_title: 'Dance Player',
 
     brand_name: 'Dance Player',
-    brand_tag:
-      'Τοπικό αρχείο · καθυστέρηση · έναρξη από συγκεκριμένο δευτερόλεπτο · μεταφορά στη γραμμή προόδου',
 
     lang_aria: 'Γλώσσα',
 
@@ -58,7 +54,7 @@ export const STRINGS = {
     field_start_sec: 'Έναρξη από (δευτ.)',
 
     start_manual_input_title:
-      'Δευτ. (π.χ. 90 ή 1,5) ή λ:δδ(.ψ). Enter για εφαρμογή, Esc για ακύρωση.',
+      'Δευτ. (π.χ. 90) ή λ:δδ. Enter για εφαρμογή, Esc για ακύρωση.',
 
     delay_label_title: 'Μετρήτης πριν το κομμάτι',
     delay_none: 'όχι',
@@ -83,8 +79,6 @@ export const STRINGS = {
     app_short_title: 'Dance Player',
 
     brand_name: 'Dance Player',
-    brand_tag:
-      'Локальный файл · задержка · вход с нужной секунды · перемотка по полоске',
 
     lang_aria: 'Язык',
 
@@ -95,7 +89,7 @@ export const STRINGS = {
     field_start_sec: 'Старт с (сек)',
 
     start_manual_input_title:
-      'Секунды (90 или 1.5) или м:сс(.д). Enter — применить, Esc — отмена.',
+      'Секунды (например 90) или м:сс. Enter — применить, Esc — отмена.',
 
     delay_label_title: 'Пауза перед треком',
     delay_none: 'нет',
