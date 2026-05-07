@@ -13,8 +13,18 @@ export const STRINGS = {
     lang_aria: 'Language',
 
     field_track: 'Track',
-    pick_file: 'Choose file',
+    pick_file: 'Change',
+    pick_file_aria: 'Choose audio file',
+    pick_file_button_aria: 'Change track file',
     track_none: 'No file chosen',
+    track_meta_idle: '\u2014',
+    track_meta_loading: 'Loading\u2026',
+    track_panel_aria: 'Track player',
+
+    seek_back_short: '-5',
+    seek_fwd_short: '+5',
+    seek_back_aria: 'Rewind 5 seconds',
+    seek_fwd_aria: 'Forward 5 seconds',
 
     field_start_sec: 'Start at (sec)',
 
@@ -48,8 +58,18 @@ export const STRINGS = {
     lang_aria: 'Γλώσσα',
 
     field_track: 'Κομμάτι',
-    pick_file: 'Επιλογή αρχείου',
+    pick_file: 'Αλλαγή',
+    pick_file_aria: 'Επιλογή αρχείου ήχου',
+    pick_file_button_aria: 'Αλλαγή αρχείου κομματιού',
     track_none: 'Δεν έχει επιλεγεί αρχείο',
+    track_meta_idle: '\u2014',
+    track_meta_loading: 'Φόρτωση\u2026',
+    track_panel_aria: 'Αναπαραγωγέας κομματιού',
+
+    seek_back_short: '-5',
+    seek_fwd_short: '+5',
+    seek_back_aria: 'Μετάβαση 5 δευτ. πίσω',
+    seek_fwd_aria: 'Μετάβαση 5 δευτ. μπροστά',
 
     field_start_sec: 'Έναρξη από (δευτ.)',
 
@@ -83,8 +103,18 @@ export const STRINGS = {
     lang_aria: 'Язык',
 
     field_track: 'Трек',
-    pick_file: 'Выбрать файл',
+    pick_file: 'Сменить',
+    pick_file_aria: 'Выбрать аудиофайл',
+    pick_file_button_aria: 'Другой файл трека',
     track_none: 'Файл не выбран',
+    track_meta_idle: '\u2014',
+    track_meta_loading: 'Загрузка\u2026',
+    track_panel_aria: 'Плеер трека',
+
+    seek_back_short: '-5',
+    seek_fwd_short: '+5',
+    seek_back_aria: 'На 5 секунд назад',
+    seek_fwd_aria: 'На 5 секунд вперёд',
 
     field_start_sec: 'Старт с (сек)',
 

@@ -11,10 +11,13 @@ const els = {
   file: document.getElementById('audio-file'),
   fileBtn: document.getElementById('pick-file-btn'),
   trackName: document.getElementById('track-name'),
+  trackMeta: document.getElementById('track-meta'),
   delaySlider: document.getElementById('delay-slider'),
   delayValue: document.getElementById('delay-value'),
   startSec: document.getElementById('start-sec'),
   playPause: document.getElementById('btn-play-pause'),
+  seekBack: document.getElementById('btn-seek-back'),
+  seekFwd: document.getElementById('btn-seek-fwd'),
   stop: document.getElementById('btn-stop'),
   countdown: document.getElementById('countdown-num'),
   audio: document.getElementById('player'),
@@ -59,6 +62,17 @@ function syncActionButtons() {
   els.playPause.dataset.mode = showPause ? 'pause' : 'play';
   const s = getStrings(getCurrentLocale());
   els.playPause.setAttribute('aria-label', showPause ? s.btn_pause : s.btn_play);
+
+  const seekOk = hasSrc && getDuration() > 0;
+  els.seekBack.disabled = !seekOk;
+  els.seekFwd.disabled = !seekOk;
+}
+
+function seekBySeconds(delta) {
+  const d = getDuration();
+  if (d <= 0) return;
+  els.audio.currentTime = clamp(els.audio.currentTime + delta, 0, d);
+  syncTransport();
 }
 
 /** Pixel height of one roller step (derived from `--roller-item-h`). */
@@ -426,9 +440,39 @@ function getDuration() {
   return Number.isFinite(d) && d > 0 ? d : 0;
 }
 
+function fileExtFromName(name) {
+  if (!name) return '';
+  const i = name.lastIndexOf('.');
+  if (i < 0 || i === name.length - 1) return '';
+  return name.slice(i + 1).toUpperCase();
+}
+
+function syncTrackMeta() {
+  const el = els.trackMeta;
+  if (!el) return;
+  const s = getStrings(getCurrentLocale());
+  if (!els.audio.src) {
+    el.textContent = s.track_meta_idle;
+    return;
+  }
+  const name = els.trackName.getAttribute('title') || els.trackName.textContent || '';
+  const ext = fileExtFromName(name);
+  const d = getDuration();
+  if (d <= 0) {
+    el.textContent = ext || s.track_meta_loading;
+    return;
+  }
+  const dur = formatTime(d);
+  el.textContent = ext ? `${dur} \u2022 ${ext}` : dur;
+}
+
+function setTransportThumbPct(pct) {
+  els.transportTrack.style.setProperty('--transport-pct', `${clamp(pct, 0, 100)}%`);
+}
+
 function updateTransportAria() {
   const track = els.transportTrack;
-  if (!track || els.transport.hidden) return;
+  if (!track) return;
   const d = getDuration();
   const t = els.audio.currentTime;
   if (d <= 0) {
@@ -442,6 +486,18 @@ function updateTransportAria() {
   track.setAttribute('aria-valuetext', `${formatTime(t)} ${s.transport_time_of} ${formatTime(d)}`);
 }
 
+function transportTimelineReady() {
+  return !!els.audio.src && getDuration() > 0;
+}
+
+function syncTransportAvailability() {
+  const ready = transportTimelineReady();
+  els.transport.classList.toggle('transport--idle', !ready);
+  els.transportTrack.tabIndex = ready ? 0 : -1;
+  if (ready) els.transportTrack.removeAttribute('aria-disabled');
+  else els.transportTrack.setAttribute('aria-disabled', 'true');
+}
+
 function syncTransport() {
   if (isScrubbing) return;
   const d = els.audio.duration;
@@ -450,18 +506,22 @@ function syncTransport() {
     els.transportFill.style.width = '0%';
     els.timeCurrent.textContent = formatTime(els.audio.currentTime);
     updateTransportAria();
-    return;
+    setTransportThumbPct(0);
+  } else {
+    els.timeDuration.textContent = formatTime(d);
+    els.timeCurrent.textContent = formatTime(els.audio.currentTime);
+    const pct = clamp((els.audio.currentTime / d) * 100, 0, 100);
+    els.transportFill.style.width = `${pct}%`;
+    updateTransportAria();
+    setTransportThumbPct(pct);
   }
-  els.timeDuration.textContent = formatTime(d);
-  els.timeCurrent.textContent = formatTime(els.audio.currentTime);
-  const pct = clamp((els.audio.currentTime / d) * 100, 0, 100);
-  els.transportFill.style.width = `${pct}%`;
-  updateTransportAria();
+  syncTransportAvailability();
 }
 
 function ratioFromClientX(clientX) {
-  const track = els.transportTrack;
-  const rect = track.getBoundingClientRect();
+  const rail = els.transportTrack.querySelector('.transport-bar-rail');
+  const target = rail instanceof Element ? rail : els.transportTrack;
+  const rect = target.getBoundingClientRect();
   const x = clamp(clientX - rect.left, 0, rect.width);
   return rect.width > 0 ? x / rect.width : 0;
 }
@@ -475,10 +535,7 @@ function seekToRatio(ratio) {
   els.timeCurrent.textContent = formatTime(els.audio.currentTime);
   els.transportFill.style.width = `${r * 100}%`;
   updateTransportAria();
-}
-
-function setTransportVisible(show) {
-  els.transport.hidden = !show;
+  setTransportThumbPct(r * 100);
 }
 
 function revokeUrl() {
@@ -499,10 +556,11 @@ function bindFile() {
       els.trackName.textContent = getStrings(getCurrentLocale()).track_none;
       els.trackName.removeAttribute('title');
       els.audio.removeAttribute('src');
-      setTransportVisible(false);
       resumeAfterUserPause = false;
       clampStartSecToMax();
+      syncTransport();
       syncActionButtons();
+      syncTrackMeta();
       return;
     }
     objectUrl = URL.createObjectURL(file);
@@ -512,7 +570,9 @@ function bindFile() {
     els.trackName.title = file.name;
     resumeAfterUserPause = false;
     syncStartRollerAvailability();
+    syncTransport();
     syncActionButtons();
+    syncTrackMeta();
   });
 }
 
@@ -622,17 +682,24 @@ function bindControls() {
     if (tick !== null || !els.audio.paused) pausePlayback();
     else void armPlayback();
   });
+  els.seekBack.addEventListener('click', () => seekBySeconds(-5));
+  els.seekFwd.addEventListener('click', () => seekBySeconds(5));
   els.stop.addEventListener('click', hardStop);
 
   els.audio.addEventListener('play', syncActionButtons);
   els.audio.addEventListener('pause', syncActionButtons);
 
   function applyAudioDuration() {
-    if (getDuration() <= 0) return;
-    setTransportVisible(true);
+    if (getDuration() <= 0) {
+      syncTransport();
+      syncActionButtons();
+      syncTrackMeta();
+      return;
+    }
     clampStartSecToMax();
     syncTransport();
     syncActionButtons();
+    syncTrackMeta();
   }
 
   els.audio.addEventListener('loadedmetadata', applyAudioDuration);
@@ -744,6 +811,7 @@ function refreshDynamicCopy() {
   }
   updateTransportAria();
   syncActionButtons();
+  syncTrackMeta();
 }
 
 function init() {
@@ -753,13 +821,14 @@ function init() {
   clampStartSecToMax();
   els.playPause.disabled = true;
   setCountdownIdle();
-  setTransportVisible(false);
+  syncTransport();
   wireLangSelect();
   bindFile();
   bindControls();
   bindTransportScrub();
   bindStartRoller();
   bindStartManualEntry();
+  syncTrackMeta();
   syncActionButtons();
 }
 
