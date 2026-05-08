@@ -54,6 +54,9 @@ export const STRINGS = {
     transport_time_of: 'of',
 
     hint_countdown: 'After you start — countdown',
+    countdown_starting_in: 'Starting in',
+    countdown_seconds_label: 'seconds',
+    countdown_will_start_prefix: 'Will start from',
   },
 
   el: {
@@ -108,6 +111,9 @@ export const STRINGS = {
     transport_time_of: 'από',
 
     hint_countdown: 'Μετά την εκκίνηση — αντίστροφη μέτρηση',
+    countdown_starting_in: 'Ξεκινά σε',
+    countdown_seconds_label: 'δευτερόλεπτα',
+    countdown_will_start_prefix: 'Θα ξεκινήσει από',
   },
 
   ru: {
@@ -162,5 +168,8 @@ export const STRINGS = {
     transport_time_of: 'из',
 
     hint_countdown: 'После запуска — обратный отсчёт',
+    countdown_starting_in: 'Старт через',
+    countdown_seconds_label: 'секунд',
+    countdown_will_start_prefix: 'Воспроизведение с',
   },
 };

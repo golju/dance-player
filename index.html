@@ -262,14 +262,49 @@
         </div>
       </main>
 
-      <div class="countdown countdown--stage">
-        <div
-          class="countdown-num countdown-hint"
-          id="countdown-num"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          After you start — countdown
+      <div
+        class="countdown countdown--stage"
+        id="countdown-stage"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <div class="countdown__idle" id="countdown-idle">
+          <p class="countdown__hint" data-i18n="hint_countdown">After you start — countdown</p>
+        </div>
+        <div class="countdown__active" id="countdown-active" hidden>
+          <div class="countdown__header">
+            <span class="countdown__rule" aria-hidden="true"></span>
+            <span class="countdown__heading" data-i18n="countdown_starting_in">Starting in</span>
+            <span class="countdown__rule" aria-hidden="true"></span>
+          </div>
+          <div class="countdown__ring-shell">
+            <svg class="countdown__ring" viewBox="0 0 120 120" aria-hidden="true">
+              <defs>
+                <linearGradient id="countdown-ring-grad" x1="60" y1="120" x2="60" y2="0" gradientUnits="userSpaceOnUse">
+                  <stop class="countdown-stop-a" offset="0%" />
+                  <stop class="countdown-stop-b" offset="100%" />
+                </linearGradient>
+              </defs>
+              <circle class="countdown__ring-track" cx="60" cy="60" r="52" fill="none" pathLength="100" />
+              <circle
+                class="countdown__ring-progress"
+                id="countdown-ring-progress"
+                cx="60"
+                cy="60"
+                r="52"
+                fill="none"
+                pathLength="100"
+              />
+            </svg>
+            <div class="countdown__ring-center">
+              <span class="countdown-num" id="countdown-num">3</span>
+            </div>
+          </div>
+          <div class="countdown__unit" data-i18n="countdown_seconds_label">seconds</div>
+          <div class="countdown__pill">
+            <span data-i18n="countdown_will_start_prefix">Will start from</span>
+            <span class="countdown__pill-time" id="countdown-pill-time">0:00</span>
+          </div>
         </div>
       </div>
     </div>

@@ -24,7 +24,11 @@ const els = {
   seekBack: document.getElementById('btn-seek-back'),
   seekFwd: document.getElementById('btn-seek-fwd'),
   stop: document.getElementById('btn-stop'),
+  countdownStage: document.getElementById('countdown-stage'),
+  countdownIdle: document.getElementById('countdown-idle'),
+  countdownActive: document.getElementById('countdown-active'),
   countdown: document.getElementById('countdown-num'),
+  countdownPillTime: document.getElementById('countdown-pill-time'),
   audio: document.getElementById('player'),
   transport: document.getElementById('transport'),
   transportTrack: document.getElementById('transport-track'),
@@ -37,11 +41,17 @@ const els = {
 /** @type {string | null} */
 let objectUrl = null;
 
-/** @type {ReturnType<typeof setInterval> | null} */
+/** @type {number | null} — requestAnimationFrame id while counting down */
 let tick = null;
 
 /** @type {number} */
 let countEndMs = 0;
+
+/** @type {number} */
+let countdownTotalSec = 0;
+
+/** @type {number | null} */
+let lastDisplayedSec = null;
 
 /** @type {boolean} */
 let isScrubbing = false;
@@ -343,21 +353,51 @@ function persist() {
 
 function clearTick() {
   if (tick !== null) {
-    clearInterval(tick);
+    cancelAnimationFrame(tick);
     tick = null;
   }
 }
 
-function setCountdownIdle() {
-  els.countdown.classList.add('countdown-hint');
-  els.countdown.classList.remove('is-ticking');
-  els.countdown.textContent = getStrings(getCurrentLocale()).hint_countdown;
+function updateCountdownRing(leftMs) {
+  if (!els.countdownStage) return;
+  const pct =
+    countdownTotalSec > 0 ? clamp(1 - leftMs / (countdownTotalSec * 1000), 0, 1) : 0;
+  els.countdownStage.style.setProperty('--countdown-pct', String(pct));
 }
 
-function setCountdownTick(n) {
-  els.countdown.classList.remove('countdown-hint');
+/** Two-digit values (e.g. 10s) need a smaller headline or they clip inside the ring. */
+function setCountdownDisplayedSeconds(n) {
+  if (!els.countdown) return;
+  const s = String(n);
+  els.countdown.textContent = s;
+  els.countdown.classList.toggle('countdown-num--double', s.length >= 2);
+}
+
+function enterCountdownMode(totalSec) {
+  countdownTotalSec = totalSec;
+  if (!els.countdownIdle || !els.countdownActive || !els.countdownStage || !els.countdown) return;
+  els.countdownIdle.hidden = true;
+  els.countdownActive.hidden = false;
+  els.countdownStage.classList.add('countdown--ticking');
   els.countdown.classList.add('is-ticking');
-  els.countdown.textContent = String(n);
+  updateCountdownRing(countdownTotalSec * 1000);
+  setCountdownDisplayedSeconds(totalSec);
+  lastDisplayedSec = totalSec;
+  const startSec = startSecForPlayback();
+  if (els.countdownPillTime) els.countdownPillTime.textContent = formatTime(startSec);
+}
+
+function setCountdownIdle() {
+  countdownTotalSec = 0;
+  lastDisplayedSec = null;
+  if (!els.countdownStage || !els.countdownIdle || !els.countdownActive || !els.countdown) return;
+  els.countdownStage.style.removeProperty('--countdown-pct');
+  els.countdownStage.classList.remove('countdown--ticking');
+  els.countdown.classList.remove('is-ticking', 'countdown-num--double');
+  els.countdownIdle.hidden = false;
+  els.countdownActive.hidden = true;
+  const hint = els.countdownIdle.querySelector('[data-i18n="hint_countdown"]');
+  if (hint) hint.textContent = getStrings(getCurrentLocale()).hint_countdown;
 }
 
 function formatTime(seconds) {
@@ -527,15 +567,32 @@ async function beginPlay(startSec) {
   syncActionButtons();
 }
 
-function runCountdownStep() {
-  const left = Math.max(0, Math.ceil((countEndMs - Date.now()) / 1000));
-  if (left > 0) setCountdownTick(left);
+function countdownLoop() {
+  if (!els.countdown) {
+    tick = null;
+    return;
+  }
+  const leftMs = Math.max(0, countEndMs - Date.now());
+  const left = Math.ceil(leftMs / 1000);
+  updateCountdownRing(leftMs);
+
+  if (left > 0) {
+    if (left !== lastDisplayedSec) {
+      lastDisplayedSec = left;
+      setCountdownDisplayedSeconds(left);
+      if (els.countdownPillTime) els.countdownPillTime.textContent = formatTime(startSecForPlayback());
+    }
+  }
 
   if (Date.now() >= countEndMs) {
-    clearTick();
+    tick = null;
+    lastDisplayedSec = null;
     const startSec = startSecForPlayback();
     void beginPlay(startSec);
+    return;
   }
+
+  tick = requestAnimationFrame(countdownLoop);
 }
 
 async function armPlayback() {
@@ -566,8 +623,8 @@ async function armPlayback() {
   }
 
   countEndMs = Date.now() + delaySec * 1000;
-  runCountdownStep();
-  tick = setInterval(runCountdownStep, 200);
+  enterCountdownMode(delaySec);
+  tick = requestAnimationFrame(countdownLoop);
   syncActionButtons();
 }
 
@@ -687,7 +744,11 @@ function bindControls() {
   });
 
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && tick !== null) runCountdownStep();
+    if (document.visibilityState !== 'visible') return;
+    if (!els.countdownStage?.classList.contains('countdown--ticking')) return;
+    const leftMs = Math.max(0, countEndMs - Date.now());
+    updateCountdownRing(leftMs);
+    if (tick === null && leftMs > 0) tick = requestAnimationFrame(countdownLoop);
   });
 
   document.addEventListener('keydown', (e) => {
@@ -778,8 +839,9 @@ function wireLangSelect() {
 }
 
 function refreshDynamicCopy() {
-  if (!els.countdown.classList.contains('is-ticking')) {
-    els.countdown.textContent = getStrings(getCurrentLocale()).hint_countdown;
+  if (!els.countdownStage?.classList.contains('countdown--ticking')) {
+    const hint = els.countdownIdle?.querySelector('[data-i18n="hint_countdown"]');
+    if (hint) hint.textContent = getStrings(getCurrentLocale()).hint_countdown;
   }
   if (!els.audio.src) {
     els.trackName.textContent = getStrings(getCurrentLocale()).track_none;
