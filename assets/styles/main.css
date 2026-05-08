@@ -1390,9 +1390,9 @@ input[type='range']::-moz-range-thumb {
   }
 
   .track-panel {
-    background: #fff;
-    border-color: color-mix(in srgb, var(--surface-border) 72%, transparent);
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+    background: color-mix(in srgb, var(--palette-soft) 94%, rgba(15, 23, 42, 0.92));
+    border-color: var(--surface-border);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.32), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
   }
 
   .field.row-2 {
@@ -1463,37 +1463,45 @@ input[type='range']::-moz-range-thumb {
   }
 
   .transport {
-    background: #f1f5f9;
-    border-color: color-mix(in srgb, var(--surface-border) 55%, rgba(255, 255, 255, 0.06) 45%);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07) inset;
+    background: color-mix(in srgb, var(--palette-soft) 88%, #0f172a);
+    border-color: color-mix(in srgb, var(--surface-border) 85%, rgba(255, 255, 255, 0.04));
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28) inset;
   }
 
   .transport--idle {
-    background: color-mix(in srgb, #e2e8f0 88%, var(--ink-muted) 12%);
-    border-color: color-mix(in srgb, var(--surface-border) 58%, var(--ink-muted) 22%);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06) inset;
+    background: color-mix(in srgb, var(--palette-soft) 72%, rgba(15, 23, 42, 0.88));
+    border-color: color-mix(in srgb, var(--surface-border) 65%, var(--ink-muted));
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22) inset;
   }
 
   .transport--idle .transport-bar {
-    background: color-mix(in srgb, var(--ink-muted) 45%, transparent);
+    background: color-mix(in srgb, var(--ink-muted) 32%, transparent);
   }
 
   .transport--idle .transport-fill {
-    background: color-mix(in srgb, var(--ink-muted) 50%, var(--palette-muted) 50%);
+    background: color-mix(in srgb, var(--ink-muted) 45%, rgba(241, 245, 249, 0.22));
+    opacity: 0.72;
+  }
+
+  .transport--idle .transport-time {
+    color: var(--palette-deep);
+    opacity: 0.88;
+    font-weight: 600;
   }
 
   .transport-actions--compact {
-    background: #fff;
-    border-top-color: color-mix(in srgb, var(--surface-border) 78%, transparent);
-    --tcircle-bg: #e2e8f0;
-    --tcircle-border: color-mix(in srgb, var(--surface-border) 88%, rgba(255, 255, 255, 0.09) 12%);
-    --tcircle-hover: color-mix(in srgb, #cbd5e1 78%, var(--accent-soft) 22%);
-    --tcircle-hover-border: color-mix(in srgb, var(--accent) 34%, var(--surface-border) 66%);
-    --tcircle-ink: #0f172a;
+    background: color-mix(in srgb, var(--palette-soft) 92%, #0c1222);
+    border-top-color: var(--surface-border);
+    --tcircle-bg: color-mix(in srgb, rgba(255, 255, 255, 0.09) 100%, transparent);
+    --tcircle-border: color-mix(in srgb, var(--surface-border) 90%, rgba(255, 255, 255, 0.06));
+    --tcircle-hover: color-mix(in srgb, rgba(255, 255, 255, 0.14) 100%, var(--accent-soft));
+    --tcircle-hover-border: color-mix(in srgb, var(--accent) 38%, var(--surface-border));
+    --tcircle-ink: var(--palette-deep);
   }
 
   .transport--idle .transport-actions--compact {
-    background: #f1f5f9;
+    background: color-mix(in srgb, var(--palette-soft) 85%, rgba(15, 23, 42, 0.75));
+    opacity: 1;
   }
 
   .transport-actions--compact .btn-tiny--stop {
