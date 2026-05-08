@@ -67,7 +67,7 @@ body::before {
   pointer-events: none;
 }
 
-/* Subtle film grain (lo-fi matte) */
+/* Layered film grain (coarse + fine): depth without heavy banding */
 body::after {
   content: '';
   position: fixed;
@@ -75,8 +75,21 @@ body::after {
   z-index: -1;
   pointer-events: none;
   opacity: var(--noise-opacity);
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='dpNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23dpNoise)'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cfilter id='gc'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.58' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23gc)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cfilter id='gf'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.12' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23gf)'/%3E%3C/svg%3E");
+  background-repeat: repeat, repeat;
+  background-size: 280px 280px, 96px 96px;
+  background-position:
+    0 0,
+    41px 67px;
+}
+
+@media (prefers-color-scheme: dark) {
+  body::after {
+    mix-blend-mode: overlay;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -278,12 +291,13 @@ body::after {
 .track-panel {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1.15rem 1rem;
-  border-radius: var(--radius-lg);
-  background: #fff;
-  border: 1px solid color-mix(in srgb, var(--surface-border) 85%, var(--palette-deep) 12%);
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08), 0 1px 0 rgba(255, 255, 255, 0.88) inset;
+  gap: 0.7rem;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .track-panel__hero {
@@ -859,15 +873,15 @@ input[type='range']::-moz-range-thumb {
   --tcircle-hover: color-mix(in srgb, #e2e8f0 88%, var(--accent-soft) 12%);
   --tcircle-hover-border: color-mix(in srgb, var(--field-border) 52%, var(--accent) 26%);
   --tcircle-ink: #0f172a;
-  margin: 0.35rem -0.75rem -0.85rem;
-  padding: 0.38rem 0.42rem 0.48rem;
-  border-top: 1px solid color-mix(in srgb, var(--surface-border) 88%, var(--palette-deep) 12%);
-  border-radius: 0 0 calc(var(--radius-lg) - 2px) calc(var(--radius-lg) - 2px);
-  background: #fff;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
 }
 
 .transport--idle .transport-actions--compact {
-  background: #f8fafc;
+  background: transparent;
   opacity: 1;
 }
 
@@ -1158,11 +1172,13 @@ input[type='range']::-moz-range-thumb {
 
 .transport {
   margin-top: 0;
-  padding: 0.85rem 0.5rem;
-  border-radius: var(--radius-lg);
-  background: #f8fafc;
-  border: 1px solid color-mix(in srgb, var(--surface-border) 78%, var(--palette-deep) 8%);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.045) inset;
+  padding: 0.9rem 0 0;
+  margin-inline: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  border-top: 1px solid color-mix(in srgb, var(--surface-border) 70%, transparent);
+  box-shadow: none;
 }
 
 .transport-scrub {
@@ -1263,9 +1279,9 @@ input[type='range']::-moz-range-thumb {
 }
 
 .transport--idle {
-  background: color-mix(in srgb, #f8fafc 78%, var(--ink-muted) 12%);
-  border-color: color-mix(in srgb, var(--surface-border) 68%, var(--ink-muted) 18%);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) inset;
+  background: transparent;
+  border-top-color: color-mix(in srgb, var(--surface-border) 65%, var(--ink-muted) 35%);
+  box-shadow: none;
 }
 
 .transport--idle .transport-bar {
@@ -1607,9 +1623,9 @@ input[type='range']::-moz-range-thumb {
   }
 
   .track-panel {
-    background: color-mix(in srgb, var(--palette-soft) 94%, rgba(15, 23, 42, 0.92));
-    border-color: var(--surface-border);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.32), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+    background: transparent;
+    border: none;
+    box-shadow: none;
   }
 
   .field.row-2 {
@@ -1680,15 +1696,17 @@ input[type='range']::-moz-range-thumb {
   }
 
   .transport {
-    background: color-mix(in srgb, var(--palette-soft) 88%, #0f172a);
-    border-color: color-mix(in srgb, var(--surface-border) 85%, rgba(255, 255, 255, 0.04));
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28) inset;
+    background: transparent;
+    border: none;
+    border-top: 1px solid var(--surface-border);
+    box-shadow: none;
   }
 
   .transport--idle {
-    background: color-mix(in srgb, var(--palette-soft) 72%, rgba(15, 23, 42, 0.88));
-    border-color: color-mix(in srgb, var(--surface-border) 65%, var(--ink-muted));
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22) inset;
+    background: transparent;
+    border: none;
+    border-top-color: color-mix(in srgb, var(--surface-border) 75%, var(--ink-muted));
+    box-shadow: none;
   }
 
   .transport--idle .transport-bar {
@@ -1707,8 +1725,8 @@ input[type='range']::-moz-range-thumb {
   }
 
   .transport-actions--compact {
-    background: color-mix(in srgb, var(--palette-soft) 92%, #0c1222);
-    border-top-color: var(--surface-border);
+    background: transparent;
+    border: none;
     --tcircle-bg: color-mix(in srgb, rgba(255, 255, 255, 0.09) 100%, transparent);
     --tcircle-border: color-mix(in srgb, var(--surface-border) 90%, rgba(255, 255, 255, 0.06));
     --tcircle-hover: color-mix(in srgb, rgba(255, 255, 255, 0.14) 100%, var(--accent-soft));
@@ -1717,7 +1735,7 @@ input[type='range']::-moz-range-thumb {
   }
 
   .transport--idle .transport-actions--compact {
-    background: color-mix(in srgb, var(--palette-soft) 85%, rgba(15, 23, 42, 0.75));
+    background: transparent;
     opacity: 1;
   }
 
