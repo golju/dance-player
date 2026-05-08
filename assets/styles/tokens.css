@@ -66,7 +66,57 @@
   --safe-right: env(safe-area-inset-right, 0px);
 
   /* Film grain strength (see main.css body::after) */
-  --noise-opacity: 0.21;
+  --noise-opacity: 0.34;
+
+  /* Countdown screen — warm white + mist blue glass, cobalt accent (see main.css .countdown) */
+  --countdown-background-gradient: radial-gradient(
+      112% 92% at 92% 0%,
+      rgba(219, 234, 254, 0.42) 0%,
+      transparent 52%
+    ),
+    radial-gradient(88% 78% at 6% 100%, rgba(241, 245, 249, 0.58) 0%, transparent 58%),
+    linear-gradient(
+      168deg,
+      rgba(253, 252, 250, 0.64) 0%,
+      rgba(249, 250, 251, 0.56) 34%,
+      rgba(244, 247, 251, 0.48) 68%,
+      rgba(238, 244, 251, 0.42) 100%
+    );
+  --countdown-primary-blue: #1d4ed8;
+  --countdown-blue-glow: rgba(30, 58, 138, 0.14);
+  --countdown-muted-text: #64748b;
+  --countdown-shell-border: color-mix(in srgb, var(--surface-border) 64%, var(--countdown-primary-blue) 9%);
+  --countdown-backdrop-saturate: 1.05;
+  --countdown-heading-ink: color-mix(in srgb, #1e293b 58%, var(--countdown-primary-blue) 42%);
+  --countdown-caption-ink: color-mix(in srgb, #334155 88%, var(--countdown-primary-blue) 12%);
+  --countdown-pill-prefix-ink: color-mix(in srgb, #334155 91%, var(--countdown-primary-blue) 9%);
+  --countdown-header-rule-mid: color-mix(in srgb, #334155 52%, var(--countdown-primary-blue) 48%);
+  --countdown-pill-border: color-mix(in srgb, rgba(203, 213, 225, 0.82) 100%, var(--countdown-primary-blue) 14%);
+  --countdown-time-bright: #2563eb;
+  --countdown-digit-hi: #3b82f6;
+  --countdown-digit-mid-band: color-mix(in srgb, var(--countdown-primary-blue) 78%, #1e3a8a 22%);
+  --countdown-digit-lo: #1e3a8a;
+  --countdown-ring-bg: color-mix(in srgb, #94a3b8 38%, #cbd5f5 62%);
+  --countdown-card-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 0 0 1px rgba(255, 255, 255, 0.42) inset,
+    0 20px 48px rgba(15, 23, 42, 0.05), 0 8px 22px rgba(30, 64, 175, 0.035), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --countdown-pill-shadow:
+    0 7px 26px rgba(15, 23, 42, 0.045), 0 18px 50px rgba(15, 23, 42, 0.055),
+    0 2px 6px rgba(15, 23, 42, 0.04);
+  --countdown-pill-fill: linear-gradient(
+    168deg,
+    rgba(255, 255, 255, 0.97) 0%,
+    rgba(252, 253, 255, 0.86) 38%,
+    rgba(242, 246, 252, 0.72) 100%
+  );
+  --countdown-pill-backdrop-saturate: 1.12;
+  --countdown-pill-divider-gradient: linear-gradient(
+    180deg,
+    rgba(248, 250, 252, 0) 0%,
+    color-mix(in srgb, #cbd5e1 80%, var(--countdown-primary-blue)) 43%,
+    color-mix(in srgb, #94a3b8 76%, var(--countdown-primary-blue)) 61%,
+    rgba(248, 250, 252, 0) 100%
+  );
+  --countdown-radius-pill: 624.9375rem;
 
   color-scheme: light;
 }
@@ -116,7 +166,54 @@
     --shadow-soft: 0 16px 48px rgba(0, 0, 0, 0.45),
       0 0 0 1px rgba(255, 255, 255, 0.05) inset;
 
-    --noise-opacity: 0.17;
+    --noise-opacity: 0.27;
+
+    --countdown-background-gradient: radial-gradient(
+        108% 90% at 88% 0%,
+        rgba(96, 165, 250, 0.12) 0%,
+        transparent 56%
+      ),
+      radial-gradient(90% 82% at 8% 100%, rgba(30, 58, 138, 0.24) 0%, transparent 58%),
+      linear-gradient(
+        162deg,
+        rgba(15, 20, 25, 0.58) 0%,
+        rgba(17, 24, 39, 0.5) 46%,
+        rgba(10, 15, 24, 0.44) 100%
+      );
+    --countdown-primary-blue: #60a5fa;
+    --countdown-blue-glow: rgba(96, 165, 250, 0.12);
+    --countdown-muted-text: #94a3b8;
+    --countdown-shell-border: color-mix(in srgb, var(--surface-border) 76%, var(--countdown-primary-blue) 14%);
+    --countdown-backdrop-saturate: 1.08;
+    --countdown-heading-ink: color-mix(in srgb, #cbd5e1 70%, var(--countdown-primary-blue) 30%);
+    --countdown-caption-ink: color-mix(in srgb, #94a3b8 74%, rgba(148, 197, 253, 0.28) 26%);
+    --countdown-pill-prefix-ink: color-mix(in srgb, #cbd5e1 88%, rgba(148, 197, 253, 0.35));
+    --countdown-header-rule-mid: color-mix(in srgb, var(--palette-muted) 72%, var(--countdown-primary-blue));
+    --countdown-pill-border: color-mix(in srgb, var(--surface-border) 92%, rgba(147, 197, 253, 0.18));
+    --countdown-time-bright: #60a5fa;
+    --countdown-digit-hi: color-mix(in srgb, #bfdbfe 65%, var(--countdown-primary-blue));
+    --countdown-digit-mid-band: color-mix(in srgb, var(--countdown-primary-blue) 52%, #1e3a8a 48%);
+    --countdown-digit-lo: #1e3a8a;
+    --countdown-ring-bg: color-mix(in srgb, #94a3b8 72%, rgba(147, 197, 253, 0.45) 28%);
+    --countdown-card-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+      0 24px 56px rgba(0, 0, 0, 0.46), 0 0 1px rgba(255, 255, 255, 0.05);
+    --countdown-pill-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+      0 8px 28px rgba(0, 0, 0, 0.28), 0 2px 10px rgba(0, 0, 0, 0.12);
+    --countdown-pill-fill: linear-gradient(
+      175deg,
+      color-mix(in srgb, rgba(255, 255, 255, 0.12) 100%, rgba(51, 65, 85, 0.2)) 0%,
+      color-mix(in srgb, rgba(255, 255, 255, 0.07) 100%, rgba(15, 23, 42, 0.5)) 50%,
+      color-mix(in srgb, rgba(15, 23, 42, 0.42) 100%, rgba(30, 41, 59, 0.55)) 100%
+    );
+    --countdown-pill-backdrop-saturate: 1.05;
+    --countdown-pill-divider-gradient: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(148, 163, 184, 0.52) 48%,
+      rgba(148, 163, 184, 0.42) 55%,
+      transparent 100%
+    );
+    --countdown-radius-pill: 624.9375rem;
 
     color-scheme: dark;
   }
