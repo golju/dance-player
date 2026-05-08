@@ -421,7 +421,7 @@ input[type='file'] {
   align-self: stretch;
   width: 100%;
   max-width: 100%;
-  margin-top: 0.45rem;
+  margin-top: 0;
   padding: 0;
   border: none;
   border-radius: 0;
@@ -1188,25 +1188,50 @@ input[type='range']::-moz-range-thumb {
 }
 
 .transport-scrub {
+  --transport-time-ch: 3ch;
+  --transport-time-pad: 0.625rem;
   display: grid;
-  grid-template-columns: 7ch minmax(0, 1fr) 7ch;
+  grid-template-columns:
+    calc(var(--transport-time-ch) + var(--transport-time-pad))
+    minmax(0, 1fr)
+    calc(var(--transport-time-ch) + var(--transport-time-pad));
   align-items: center;
-  gap: 0.6rem 0.48rem;
+  column-gap: 0;
+  row-gap: 0.6rem;
+  box-sizing: border-box;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .transport-time {
-  justify-self: center;
-  box-sizing: content-box;
-  width: 100%;
-  max-width: 7ch;
+  box-sizing: border-box;
+  min-width: 0;
   font-size: 0.8125rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
   color: var(--ink-muted);
   white-space: nowrap;
-  text-align: center;
+  text-align: start;
+}
+
+.transport-scrub #time-current {
+  justify-self: stretch;
+  width: 100%;
+  max-width: 100%;
+  padding-inline-end: var(--transport-time-pad);
+  padding-inline-start: 0;
+  text-align: start;
+}
+
+.transport-scrub #time-duration {
+  justify-self: stretch;
+  width: 100%;
+  max-width: 100%;
+  padding-inline-start: var(--transport-time-pad);
+  padding-inline-end: 0;
+  text-align: end;
 }
 
 .transport-track-shell {
@@ -1221,6 +1246,10 @@ input[type='range']::-moz-range-thumb {
   cursor: pointer;
   touch-action: none;
   outline: none;
+}
+
+.transport-scrub .transport-track {
+  margin-inline: 0;
 }
 
 .transport-bar-rail {
@@ -1348,10 +1377,10 @@ input[type='range']::-moz-range-thumb {
   isolation: isolate;
   overflow: hidden;
   width: 100%;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-height: 0;
   max-height: none;
-  margin-top: clamp(0.5rem, 1.75vw + 0.42rem, 1.08rem);
+  margin-top: clamp(0.35rem, 1.5vw + 0.28rem, 1.08rem);
   margin-bottom: 0;
   padding: clamp(0.58rem, 2.85vw + 0.35rem, 1.22rem)
     clamp(0.55rem, 4.85vw + 0.38rem, 1.52rem)
@@ -1360,7 +1389,7 @@ input[type='range']::-moz-range-thumb {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 /* Soft spotlight + mist — no raster texture */
@@ -1388,8 +1417,9 @@ input[type='range']::-moz-range-thumb {
   align-items: center;
   justify-content: center;
   width: 100%;
-  flex: 1 1 auto;
-  min-height: min(10rem, 22svh);
+  flex: 0 1 auto;
+  min-height: 0;
+  padding-block: clamp(0.42rem, 2svh, 1rem);
   text-align: center;
 }
 
@@ -1408,6 +1438,40 @@ input[type='range']::-moz-range-thumb {
   color: color-mix(in srgb, var(--countdown-muted-text) 94%, var(--palette-deep));
   padding: 0 0.5rem;
   opacity: 0.94;
+}
+
+@media (min-width: 48rem) and (min-height: 640px) {
+  .countdown.countdown--stage {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .countdown__idle {
+    flex: 1 1 auto;
+    min-height: min(9rem, 20svh);
+    padding-block: clamp(0.52rem, 3svh, 1.15rem);
+  }
+}
+
+@media (max-width: 40rem) {
+  .card {
+    gap: 0.92rem;
+    padding: 1.05rem 1rem;
+  }
+
+  .track-panel {
+    gap: 0.78rem;
+  }
+
+  .countdown.countdown--stage {
+    padding-top: clamp(0.5rem, 2.2vw + 0.32rem, 0.95rem);
+    padding-bottom: clamp(0.55rem, 2.4svh + 0.32rem, 1rem);
+  }
+
+  .countdown__hint {
+    font-size: clamp(0.97rem, 3.8vw + 0.52rem, 1.35rem);
+    line-height: 1.38;
+  }
 }
 
 .countdown__active {
