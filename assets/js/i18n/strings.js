@@ -27,13 +27,22 @@ export const STRINGS = {
     seek_fwd_aria: 'Forward 5 seconds',
 
     field_start_sec: 'Start at (sec)',
+    start_short_label: 'Start',
+    btn_set_current: 'Set current',
+    btn_set_current_aria: 'Set start time to current playback position',
 
     start_manual_input_title:
-      'Whole seconds (e.g. 90) or m:ss. Enter to apply, Esc to cancel.',
+      'Type digits (145 → 1:45), total seconds (90), or m:ss. Done/Enter applies; Esc cancels.',
 
     delay_label_title: 'Countdown before track',
+    delay_short_label: 'Countdown',
     delay_none: 'none',
     delay_sec_unit: 'sec',
+    delay_chip_none: 'None',
+    delay_chip_3: '3s',
+    delay_chip_5: '5s',
+    delay_chip_8: '8s',
+    delay_chip_10: '10s',
 
     range_label_max: '10 sec',
 
@@ -72,13 +81,22 @@ export const STRINGS = {
     seek_fwd_aria: 'Μετάβαση 5 δευτ. μπροστά',
 
     field_start_sec: 'Έναρξη από (δευτ.)',
+    start_short_label: 'Έναρξη',
+    btn_set_current: 'Τρέχον',
+    btn_set_current_aria: 'Ορισμός έναρξης στην τρέχουσα θέση αναπαραγωγής',
 
     start_manual_input_title:
-      'Δευτ. (π.χ. 90) ή λ:δδ. Enter για εφαρμογή, Esc για ακύρωση.',
+      'Ψηφία (145 → 1:45), συνολικά δευτ. (90) ή λ:δδ. Done/Enter εφαρμογή· Esc ακύρωση.',
 
     delay_label_title: 'Μετρήτης πριν το κομμάτι',
+    delay_short_label: 'Μετρήτης',
     delay_none: 'όχι',
     delay_sec_unit: 'δευτ.',
+    delay_chip_none: 'Όχι',
+    delay_chip_3: '3δ',
+    delay_chip_5: '5δ',
+    delay_chip_8: '8δ',
+    delay_chip_10: '10δ',
 
     range_label_max: '10 δευτ.',
 
@@ -117,13 +135,22 @@ export const STRINGS = {
     seek_fwd_aria: 'На 5 секунд вперёд',
 
     field_start_sec: 'Старт с (сек)',
+    start_short_label: 'Старт',
+    btn_set_current: 'Как сейчас',
+    btn_set_current_aria: 'Подставить текущую позицию воспроизведения как время старта',
 
     start_manual_input_title:
-      'Секунды (например 90) или м:сс. Enter — применить, Esc — отмена.',
+      'Цифры (145 → 1:45), секунды целиком (90) или м:сс. Готово/Enter — применить, Esc — отмена.',
 
     delay_label_title: 'Пауза перед треком',
+    delay_short_label: 'Таймер',
     delay_none: 'нет',
     delay_sec_unit: 'сек',
+    delay_chip_none: 'Нет',
+    delay_chip_3: '3 с',
+    delay_chip_5: '5 с',
+    delay_chip_8: '8 с',
+    delay_chip_10: '10 с',
 
     range_label_max: '10 сек',
 

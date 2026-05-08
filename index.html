@@ -174,62 +174,89 @@
         </section>
 
         <div class="field row-2">
-          <label class="field-label row-2__label" for="time-roller-scroll" data-i18n="field_start_sec">Start at (sec)</label>
-          <label class="field-label row-2__label" for="delay-slider">
-            <span class="field-label__text">
-              <span data-i18n="delay_label_title">Countdown before track</span
-              ><span class="field-label__colon" aria-hidden="true">: </span
-              ><span id="delay-value" class="field-label__value">none</span>
-            </span>
-          </label>
-          <div class="row-2__body row-2__body--start">
-            <div
-              class="start-time-roller"
-              id="start-time-roller"
-              role="group"
-              aria-valuemin="0"
-              aria-valuemax="3600"
-              aria-valuenow="0"
-              aria-valuetext="0:00"
-              data-i18n-attr="aria-label:field_start_sec"
-            >
-              <div class="time-roller-readout-sr tabular" id="time-roller-readout-sr">0:00</div>
-              <div class="time-roller-frame" id="time-roller-frame">
-                <div class="time-roller-window">
-                  <div class="time-roller-scroll" id="time-roller-scroll" tabindex="0" aria-hidden="true">
-                    <div class="time-roller-spacer" id="time-roller-spacer" aria-hidden="true"></div>
-                  </div>
-                  <div class="time-roller-stack" aria-hidden="true">
-                    <div class="time-roller-stack-row time-roller-stack-row--prev tabular" id="time-roller-prev"></div>
-                    <div class="time-roller-stack-row time-roller-stack-row--live tabular" id="time-roller-live">0:00</div>
-                    <div class="time-roller-stack-row time-roller-stack-row--next tabular" id="time-roller-next"></div>
+          <div class="row-2__section row-2__section--start">
+            <div class="start-picker" id="start-picker">
+              <div class="start-picker__head">
+                <div class="start-picker__line">
+                  <label class="start-picker__label" for="start-sec">
+                    <span data-i18n="start_short_label">Start</span><span class="start-picker__colon" aria-hidden="true">:</span>
+                  </label>
+                  <div
+                    class="start-time-field"
+                    id="start-time-field"
+                    role="group"
+                    aria-valuemin="0"
+                    aria-valuemax="3600"
+                    aria-valuenow="0"
+                    aria-valuetext="0:00"
+                    data-i18n-attr="aria-label:field_start_sec"
+                  >
+                    <div class="time-roller-readout-sr tabular" id="start-readout-sr">0:00</div>
+                    <input
+                      id="start-sec"
+                      class="start-time-input"
+                      type="text"
+                      inputmode="numeric"
+                      enterkeyhint="done"
+                      autocomplete="off"
+                      autocorrect="off"
+                      autocapitalize="off"
+                      spellcheck="false"
+                      value="0:00"
+                      disabled
+                      tabindex="-1"
+                      data-i18n-attr="title:start_manual_input_title"
+                    />
                   </div>
                 </div>
+                <button
+                  type="button"
+                  class="btn-set-current"
+                  id="btn-set-start-current"
+                  disabled
+                  data-i18n-attr="aria-label:btn_set_current_aria"
+                >
+                  <svg
+                    class="btn-set-current__ico"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.85"
+                    stroke-linecap="round"
+                    aria-hidden="true"
+                  >
+                    <circle cx="12" cy="12" r="6" />
+                    <path d="M12 5v2M12 17v2M5 12h2M17 12h2" />
+                  </svg>
+                  <span data-i18n="btn_set_current">Set current</span>
+                </button>
               </div>
-              <input
-                id="start-sec"
-                class="num-input num-input--start-fallback"
-                type="text"
-                inputmode="text"
-                autocomplete="off"
-                value="0"
-                tabindex="-1"
-                aria-hidden="true"
-                data-i18n-attr="title:start_manual_input_title"
-              />
             </div>
           </div>
-          <div class="row-2__body row-2__body--delay">
-            <div class="range-wrap range-wrap--paired">
-              <input id="delay-slider" type="range" min="0" max="10" step="1" value="0" />
-            </div>
-          </div>
-          <div class="row-2__foot row-2__foot--start time-roller-range tabular" id="time-roller-range">
-            <span>0:00</span><span class="time-roller-range-sep"> — </span><span id="time-roller-max">60:00</span>
-          </div>
-          <div class="row-2__foot row-2__foot--delay">
-            <div class="range-labels range-labels--paired">
-              <span>0</span><span data-i18n="range_label_max">10 sec</span>
+          <div class="row-2__section row-2__section--delay">
+            <div class="delay-picker" role="group" aria-labelledby="delay-picker-heading">
+              <span id="delay-picker-heading" class="delay-picker__label">
+                <span data-i18n="delay_short_label">Countdown</span><span class="delay-picker__colon" aria-hidden="true">:</span>
+              </span>
+              <div id="delay-chips" class="delay-picker__chips" role="radiogroup" aria-labelledby="delay-picker-heading">
+                <button type="button" class="delay-chip delay-chip--selected" role="radio" aria-checked="true" data-delay="0" data-i18n="delay_chip_none">
+                  None
+                </button>
+                <button type="button" class="delay-chip" role="radio" aria-checked="false" tabindex="-1" data-delay="3" data-i18n="delay_chip_3">
+                  3s
+                </button>
+                <button type="button" class="delay-chip" role="radio" aria-checked="false" tabindex="-1" data-delay="5" data-i18n="delay_chip_5">
+                  5s
+                </button>
+                <button type="button" class="delay-chip" role="radio" aria-checked="false" tabindex="-1" data-delay="8" data-i18n="delay_chip_8">
+                  8s
+                </button>
+                <button type="button" class="delay-chip" role="radio" aria-checked="false" tabindex="-1" data-delay="10" data-i18n="delay_chip_10">
+                  10s
+                </button>
+              </div>
             </div>
           </div>
         </div>
