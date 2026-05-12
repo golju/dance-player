@@ -1019,12 +1019,11 @@ input[type='range']::-moz-range-thumb {
 }
 
 .transport-actions--primary .btn-transport--go-start:hover:not(:disabled) {
-  filter: brightness(1.02);
-  border-color: color-mix(in srgb, #b91c1c 88%, #7f1d1d 12%);
-  background: linear-gradient(180deg, #ffffff 0%, #ffe4e6 100%);
+  filter: brightness(1.06);
+  border-color: color-mix(in srgb, #b91c1c 82%, #f87171 18%);
   box-shadow:
-    0 6px 20px rgba(220, 38, 38, 0.16),
-    0 1px 0 rgba(255, 255, 255, 0.92) inset;
+    0 8px 28px color-mix(in srgb, #fb7185 40%, transparent),
+    0 1px 0 color-mix(in srgb, #fff 40%, transparent) inset;
 }
 
 .transport-actions--primary .btn-transport--timer:active:not(:disabled),
@@ -1064,10 +1063,15 @@ input[type='range']::-moz-range-thumb {
   letter-spacing: -0.03em;
   border: 1.5px solid color-mix(in srgb, #dc2626 78%, #f87171 22%);
   color: #b91c1c;
-  background: linear-gradient(180deg, #ffffff 0%, #fff5f5 100%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, #fff 92%, #fecaca) 0%,
+    color-mix(in srgb, #fff 78%, #fda4af) 45%,
+    color-mix(in srgb, #fff 64%, #fb7185) 100%
+  );
   box-shadow:
-    0 4px 14px rgba(220, 38, 38, 0.11),
-    0 1px 0 rgba(255, 255, 255, 0.88) inset;
+    0 6px 22px color-mix(in srgb, #fb7185 34%, transparent),
+    0 1px 0 color-mix(in srgb, #fff 35%, transparent) inset;
   filter: none;
 }
 
@@ -2379,20 +2383,25 @@ input[type='range']::-moz-range-thumb {
   }
 
   .transport-actions--primary .btn-transport--go-start {
-    background: linear-gradient(180deg, #ffffff 0%, #fff5f5 100%);
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, #fff 92%, #fecaca) 0%,
+      color-mix(in srgb, #fff 78%, #fda4af) 45%,
+      color-mix(in srgb, #fff 64%, #fb7185) 100%
+    );
     border-color: color-mix(in srgb, #dc2626 72%, #f87171 28%);
     color: #b91c1c;
     box-shadow:
-      0 4px 18px rgba(0, 0, 0, 0.22),
-      0 1px 0 rgba(255, 255, 255, 0.9) inset;
+      0 6px 24px color-mix(in srgb, #fb7185 26%, transparent),
+      0 1px 0 color-mix(in srgb, #fff 10%, transparent) inset;
   }
 
   .transport-actions--primary .btn-transport--go-start:hover:not(:disabled) {
-    background: linear-gradient(180deg, #ffffff 0%, #ffe4e6 100%);
+    filter: brightness(1.06);
     border-color: color-mix(in srgb, #b91c1c 75%, #f87171 25%);
     box-shadow:
-      0 6px 22px rgba(220, 38, 38, 0.2),
-      0 1px 0 rgba(255, 255, 255, 0.92) inset;
+      0 8px 28px color-mix(in srgb, #fb7185 34%, transparent),
+      0 1px 0 color-mix(in srgb, #fff 18%, transparent) inset;
   }
 
   .transport-actions--primary .btn-go-start__icon {
