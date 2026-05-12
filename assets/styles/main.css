@@ -425,14 +425,20 @@ input[type='file'] {
   min-height: 2.85rem;
   padding: 0 1.1rem;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--btn-secondary-border);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--btn-secondary-bg) 100%, #fff 8%) 0%, var(--btn-secondary-bg) 100%);
-  color: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--btn-secondary-border) 78%, var(--accent) 14%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--btn-secondary-bg) 100%, var(--accent-soft)) 0%,
+    color-mix(in srgb, var(--btn-secondary-bg) 94%, var(--accent-soft) 14%) 100%
+  );
+  color: color-mix(in srgb, var(--ink) 91%, var(--accent-deep) 9%);
   font-family: inherit;
   font-weight: 600;
   font-size: 0.9375rem;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06), 0 1px 0 color-mix(in srgb, #fff 70%, transparent) inset;
+  box-shadow:
+    0 2px 10px color-mix(in srgb, var(--accent-glow) 8%, rgba(15, 23, 42, 0.05)),
+    0 1px 0 color-mix(in srgb, #fff 72%, transparent) inset;
   transition: background 0.18s ease, transform 0.12s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
@@ -443,11 +449,13 @@ input[type='file'] {
 .btn-secondary:hover {
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--btn-secondary-bg) 85%, var(--accent-soft)) 0%,
-    color-mix(in srgb, var(--btn-secondary-bg) 90%, var(--accent-soft) 15%) 100%
+    color-mix(in srgb, var(--btn-secondary-bg) 82%, var(--accent-soft)) 0%,
+    color-mix(in srgb, var(--btn-secondary-bg) 88%, var(--accent-soft) 22%) 100%
   );
-  border-color: color-mix(in srgb, var(--btn-secondary-border) 55%, var(--accent) 28%);
-  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent-glow) 15%, transparent);
+  border-color: color-mix(in srgb, var(--btn-secondary-border) 42%, var(--accent) 38%);
+  box-shadow:
+    0 4px 18px color-mix(in srgb, var(--accent-glow) 18%, rgba(15, 23, 42, 0.06)),
+    0 1px 0 color-mix(in srgb, #fff 76%, transparent) inset;
 }
 
 .btn-secondary.track-panel__change {
@@ -573,8 +581,12 @@ input[type='file'] {
   margin: 0;
   padding: 0.425rem 0.72rem;
   border-radius: var(--radius-pill);
-  border: 1px solid color-mix(in srgb, var(--surface-border) 78%, var(--palette-deep) 10%);
-  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--surface-border) 72%, var(--accent) 12%);
+  background: linear-gradient(
+    180deg,
+    #fff 0%,
+    color-mix(in srgb, #fff 97%, var(--accent-soft)) 100%
+  );
   color: var(--palette-deep);
   font-family: var(--font-sans);
   font-weight: 700;
@@ -596,16 +608,20 @@ input[type='file'] {
 }
 
 .start-time-input:focus:not(:disabled) {
-  border-color: color-mix(in srgb, var(--accent) 52%, var(--field-border) 48%);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 48%, var(--field-border) 52%);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 14%, transparent);
 }
 
 .start-time-input:disabled {
   opacity: 1;
   cursor: not-allowed;
   color: color-mix(in srgb, var(--ink-muted) 82%, var(--palette-deep) 18%);
-  background: color-mix(in srgb, #f1f5f9 88%, var(--accent-soft) 12%);
-  border-color: color-mix(in srgb, var(--surface-border) 88%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #f1f5f9 94%, var(--accent-soft)) 0%,
+    color-mix(in srgb, #e2e8f0 88%, var(--accent-soft)) 100%
+  );
+  border-color: color-mix(in srgb, var(--surface-border) 85%, var(--accent) 5%);
   box-shadow: none;
 }
 
@@ -618,13 +634,13 @@ input[type='file'] {
   margin: 0;
   padding: 0.425rem 0.78rem;
   border-radius: var(--radius-pill);
-  border: 1px solid color-mix(in srgb, var(--surface-border) 76%, var(--accent-soft) 14%);
+  border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--surface-border) 74%);
   background: linear-gradient(
-    180deg,
-    color-mix(in srgb, #fff 96%, var(--accent-soft) 4%) 0%,
-    color-mix(in srgb, #f8fafc 94%, var(--accent-soft) 6%) 100%
+    135deg,
+    color-mix(in srgb, #fff 94%, var(--accent-soft)) 0%,
+    color-mix(in srgb, #eff6ff 88%, var(--accent-soft)) 100%
   );
-  color: var(--accent);
+  color: color-mix(in srgb, var(--accent-deep) 88%, #1e3a8a);
   font-family: inherit;
   font-weight: 600;
   font-size: 0.875rem;
@@ -641,13 +657,17 @@ input[type='file'] {
 }
 
 .btn-set-current:hover:not(:disabled) {
-  border-color: color-mix(in srgb, var(--accent) 44%, var(--field-border) 56%);
-  background: color-mix(in srgb, var(--accent-soft) 42%, #fff);
+  border-color: color-mix(in srgb, var(--accent) 48%, var(--field-border) 52%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, #fff 88%, var(--accent-soft)) 0%,
+    color-mix(in srgb, #dbeafe 72%, var(--accent-soft)) 100%
+  );
   box-shadow: none;
 }
 
 .btn-set-current:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  outline: 2px solid color-mix(in srgb, var(--accent) 50%, transparent);
   outline-offset: 2px;
 }
 
@@ -659,7 +679,7 @@ input[type='file'] {
   opacity: 0.45;
   cursor: not-allowed;
   box-shadow: none;
-  background: color-mix(in srgb, #f1f5f9 94%, transparent);
+  background: color-mix(in srgb, #f1f5f9 94%, var(--accent-soft));
 }
 
 .btn-set-current__ico {
@@ -719,8 +739,12 @@ input[type='file'] {
   padding: 0.425rem 0.78rem;
   border-radius: var(--radius-pill);
   border: 1px solid transparent;
-  background: color-mix(in srgb, #fff 94%, var(--palette-soft) 6%);
-  color: var(--palette-deep);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #fff 92%, var(--accent-soft)) 0%,
+    color-mix(in srgb, #f1f5f9 96%, var(--accent-soft)) 100%
+  );
+  color: color-mix(in srgb, var(--palette-deep) 91%, var(--accent-deep) 9%);
   font-family: inherit;
   font-weight: 600;
   font-size: 0.875rem;
@@ -737,13 +761,17 @@ input[type='file'] {
 }
 
 .delay-chip:hover:not(:disabled) {
-  border-color: color-mix(in srgb, var(--field-border) 58%, var(--accent) 22%);
-  background: #fff;
+  border-color: color-mix(in srgb, var(--field-border) 48%, var(--accent) 32%);
+  background: linear-gradient(
+    180deg,
+    #fff 0%,
+    color-mix(in srgb, #eff6ff 82%, #fff) 100%
+  );
   box-shadow: none;
 }
 
 .delay-chip:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  outline: 2px solid color-mix(in srgb, var(--accent) 50%, transparent);
   outline-offset: 2px;
 }
 
@@ -752,18 +780,20 @@ input[type='file'] {
 }
 
 .delay-chip--selected {
-  border-color: color-mix(in srgb, var(--accent) 62%, var(--field-border) 38%);
+  border-color: color-mix(in srgb, var(--accent) 58%, var(--field-border) 42%);
   background: linear-gradient(
-    165deg,
-    color-mix(in srgb, var(--accent-soft) 58%, #fff) 0%,
-    color-mix(in srgb, var(--accent-soft) 42%, #fff) 100%
+    135deg,
+    color-mix(in srgb, var(--accent-soft) 52%, #fff) 0%,
+    color-mix(in srgb, var(--accent-soft) 35%, #e0e7ff) 100%
   );
-  color: color-mix(in srgb, var(--accent-deep) 88%, var(--palette-deep));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
+  color: color-mix(in srgb, var(--accent-deep) 90%, var(--palette-deep));
+  box-shadow:
+    0 1px 3px color-mix(in srgb, var(--accent-glow) 22%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--accent) 16%, transparent);
 }
 
 .delay-chip--selected:hover:not(:disabled) {
-  border-color: color-mix(in srgb, var(--accent) 68%, var(--field-border) 32%);
+  border-color: color-mix(in srgb, var(--accent) 64%, var(--field-border) 36%);
 }
 
 .row-2 .field-label {
@@ -1000,13 +1030,13 @@ input[type='range']::-moz-range-thumb {
   color: #fff;
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--accent) 92%, #1e3a8a) 0%,
-    var(--accent-deep) 45%,
-    color-mix(in srgb, var(--accent-deep) 75%, #4f46e5) 100%
+    color-mix(in srgb, var(--accent) 86%, #0ea5e9) 0%,
+    var(--accent-deep) 42%,
+    color-mix(in srgb, var(--accent-deep) 68%, #6366f1) 100%
   );
   box-shadow:
-    0 6px 22px color-mix(in srgb, var(--accent-glow) 38%, transparent),
-    0 1px 0 color-mix(in srgb, #fff 35%, transparent) inset;
+    0 6px 22px color-mix(in srgb, var(--accent-glow) 36%, rgba(15, 23, 42, 0.12)),
+    0 1px 0 color-mix(in srgb, #fff 38%, transparent) inset;
 }
 
 .transport-actions--primary .btn-transport--timer:hover:not(:disabled),
@@ -1014,16 +1044,16 @@ input[type='range']::-moz-range-thumb {
 .transport-actions--primary .btn-play-pause[data-mode='pause']:hover:not(:disabled) {
   filter: brightness(1.06);
   box-shadow:
-    0 8px 28px color-mix(in srgb, var(--accent-glow) 42%, transparent),
-    0 1px 0 color-mix(in srgb, #fff 40%, transparent) inset;
+    0 8px 28px color-mix(in srgb, var(--accent-glow) 44%, rgba(15, 23, 42, 0.08)),
+    0 1px 0 color-mix(in srgb, #fff 42%, transparent) inset;
 }
 
 .transport-actions--primary .btn-transport--go-start:hover:not(:disabled) {
   filter: brightness(1.06);
-  border-color: color-mix(in srgb, #b91c1c 82%, #f87171 18%);
+  border-color: color-mix(in srgb, #8b4358 58%, #d9b8c4 42%);
   box-shadow:
-    0 8px 28px color-mix(in srgb, #fb7185 40%, transparent),
-    0 1px 0 color-mix(in srgb, #fff 40%, transparent) inset;
+    0 8px 28px color-mix(in srgb, #a6677a 28%, rgba(15, 23, 42, 0.07)),
+    0 1px 0 color-mix(in srgb, #fff 30%, transparent) inset;
 }
 
 .transport-actions--primary .btn-transport--timer:active:not(:disabled),
@@ -1043,7 +1073,7 @@ input[type='range']::-moz-range-thumb {
 }
 
 .transport-actions--primary .btn-transport--go-start:focus-visible {
-  outline: 2px solid color-mix(in srgb, #dc2626 55%, transparent);
+  outline: 2px solid color-mix(in srgb, #a85d6e 48%, transparent);
   outline-offset: 4px;
 }
 
@@ -1061,17 +1091,17 @@ input[type='range']::-moz-range-thumb {
   font-size: clamp(0.75rem, 3.5vw, 1rem);
   font-weight: 800;
   letter-spacing: -0.03em;
-  border: 1.5px solid color-mix(in srgb, #dc2626 78%, #f87171 22%);
-  color: #b91c1c;
+  border: 1.5px solid color-mix(in srgb, #8b4558 52%, #e8c6ce 48%);
+  color: #6b2d3c;
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, #fff 92%, #fecaca) 0%,
-    color-mix(in srgb, #fff 78%, #fda4af) 45%,
-    color-mix(in srgb, #fff 64%, #fb7185) 100%
+    color-mix(in srgb, #fce7f3 42%, #fdfcfb) 0%,
+    color-mix(in srgb, #fbcfe8 40%, #fef6f7) 45%,
+    color-mix(in srgb, #f0abba 44%, #fde8ef) 100%
   );
   box-shadow:
-    0 6px 22px color-mix(in srgb, #fb7185 34%, transparent),
-    0 1px 0 color-mix(in srgb, #fff 35%, transparent) inset;
+    0 6px 22px color-mix(in srgb, #a6677a 24%, rgba(15, 23, 42, 0.07)),
+    0 1px 0 color-mix(in srgb, #fff 26%, transparent) inset;
   filter: none;
 }
 
@@ -1090,7 +1120,7 @@ input[type='range']::-moz-range-thumb {
   justify-content: center;
   flex-shrink: 0;
   line-height: 0;
-  color: #dc2626;
+  color: #9d4d63;
   pointer-events: none;
 }
 
@@ -1099,7 +1129,7 @@ input[type='range']::-moz-range-thumb {
   width: 1.05em;
   height: 1.05em;
   flex-shrink: 0;
-  filter: drop-shadow(0 0.5px 0.75px color-mix(in srgb, #b91c1c 18%, transparent));
+  filter: drop-shadow(0 0.5px 0.85px color-mix(in srgb, #6b2d3c 18%, transparent));
 }
 
 .transport-actions--primary .btn-go-start__time {
@@ -1108,7 +1138,7 @@ input[type='range']::-moz-range-thumb {
   letter-spacing: inherit;
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
-  color: #b91c1c;
+  color: #6b2d3c;
   line-height: 1;
   pointer-events: none;
 }
@@ -2268,30 +2298,40 @@ input[type='range']::-moz-range-thumb {
   }
 
   .delay-chip {
-    background: color-mix(in srgb, var(--btn-secondary-bg) 90%, var(--palette-card) 10%);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--btn-secondary-bg) 88%, var(--accent-soft)) 0%,
+      color-mix(in srgb, var(--palette-card) 92%, var(--accent-soft)) 100%
+    );
     border-color: transparent;
-    color: var(--palette-deep);
+    color: color-mix(in srgb, var(--palette-deep) 94%, var(--accent) 6%);
     box-shadow: none;
   }
 
   .delay-chip:hover:not(:disabled) {
-    border-color: color-mix(in srgb, var(--accent) 36%, var(--surface-border) 64%);
-    background: color-mix(in srgb, var(--palette-card) 82%, #fff 18%);
+    border-color: color-mix(in srgb, var(--accent) 40%, var(--surface-border) 60%);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--palette-card) 78%, var(--accent-soft)) 0%,
+      color-mix(in srgb, var(--palette-soft) 82%, var(--accent-soft)) 100%
+    );
   }
 
   .delay-chip--selected {
     background: linear-gradient(
-      165deg,
-      color-mix(in srgb, var(--accent-soft) 42%, var(--palette-card)) 0%,
-      color-mix(in srgb, var(--accent-soft) 28%, var(--palette-card)) 100%
+      135deg,
+      color-mix(in srgb, var(--accent-soft) 38%, var(--palette-card)) 0%,
+      color-mix(in srgb, var(--accent-soft) 52%, #312e81) 100%
     );
-    border-color: color-mix(in srgb, var(--accent) 52%, var(--surface-border) 48%);
-    color: color-mix(in srgb, var(--accent-deep) 78%, var(--palette-deep));
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 32%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 56%, var(--surface-border) 44%);
+    color: color-mix(in srgb, #bfdbfe 78%, var(--accent-deep));
+    box-shadow:
+      0 1px 3px color-mix(in srgb, var(--accent-glow) 28%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent);
   }
 
   .delay-chip--selected:hover:not(:disabled) {
-    border-color: color-mix(in srgb, var(--accent) 62%, var(--surface-border) 38%);
+    border-color: color-mix(in srgb, var(--accent) 64%, var(--surface-border) 36%);
   }
 
   .start-picker__label {
@@ -2300,22 +2340,26 @@ input[type='range']::-moz-range-thumb {
 
   .btn-set-current {
     background: linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--btn-secondary-bg) 96%, var(--accent-soft)) 0%,
-      color-mix(in srgb, var(--palette-card) 94%, var(--accent-soft)) 100%
+      135deg,
+      color-mix(in srgb, var(--btn-secondary-bg) 92%, var(--accent-soft)) 0%,
+      color-mix(in srgb, var(--palette-card) 90%, var(--accent-soft)) 100%
     );
-    border-color: color-mix(in srgb, var(--surface-border) 72%, rgba(255, 255, 255, 0.06) 28%);
-    color: color-mix(in srgb, var(--accent) 85%, #93c5fd);
+    border-color: color-mix(in srgb, var(--accent) 34%, var(--surface-border) 66%);
+    color: color-mix(in srgb, var(--accent) 78%, #93c5fd);
     box-shadow: none;
   }
 
   .btn-set-current:hover:not(:disabled) {
-    border-color: color-mix(in srgb, var(--accent) 42%, var(--surface-border) 58%);
-    background: color-mix(in srgb, var(--accent-soft) 32%, var(--palette-card));
+    border-color: color-mix(in srgb, var(--accent) 52%, var(--surface-border) 48%);
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent-soft) 42%, var(--palette-card)) 0%,
+      color-mix(in srgb, var(--accent-soft) 28%, #1e3a5f) 100%
+    );
   }
 
   .btn-set-current:disabled {
-    background: color-mix(in srgb, var(--palette-soft) 40%, var(--palette-card) 60%);
+    background: color-mix(in srgb, var(--palette-soft) 44%, var(--palette-card) 56%);
   }
 
   .transport {
@@ -2370,64 +2414,72 @@ input[type='range']::-moz-range-thumb {
   .transport-actions--primary .btn-play-pause[data-mode='play'],
   .transport-actions--primary .btn-play-pause[data-mode='pause'] {
     box-shadow:
-      0 6px 24px color-mix(in srgb, var(--accent-glow) 28%, transparent),
-      0 1px 0 color-mix(in srgb, #fff 10%, transparent) inset;
+      0 6px 24px color-mix(in srgb, var(--accent-glow) 32%, rgba(0, 0, 0, 0.35)),
+      0 1px 0 color-mix(in srgb, #fff 12%, transparent) inset;
   }
 
   .transport-actions--primary .btn-transport--timer:hover:not(:disabled),
   .transport-actions--primary .btn-play-pause[data-mode='play']:hover:not(:disabled),
   .transport-actions--primary .btn-play-pause[data-mode='pause']:hover:not(:disabled) {
     box-shadow:
-      0 8px 28px color-mix(in srgb, var(--accent-glow) 34%, transparent),
+      0 8px 28px color-mix(in srgb, var(--accent-glow) 40%, rgba(0, 0, 0, 0.28)),
       0 1px 0 color-mix(in srgb, #fff 18%, transparent) inset;
   }
 
   .transport-actions--primary .btn-transport--go-start {
     background: linear-gradient(
       135deg,
-      color-mix(in srgb, #fff 92%, #fecaca) 0%,
-      color-mix(in srgb, #fff 78%, #fda4af) 45%,
-      color-mix(in srgb, #fff 64%, #fb7185) 100%
+      color-mix(in srgb, #e8a0b2 20%, #1e293b) 0%,
+      color-mix(in srgb, #d8879a 24%, #243047) 45%,
+      color-mix(in srgb, #b86b7c 28%, #334155) 100%
     );
-    border-color: color-mix(in srgb, #dc2626 72%, #f87171 28%);
-    color: #b91c1c;
+    border-color: color-mix(in srgb, #c49aa4 38%, var(--surface-border) 62%);
+    color: #e8d5d9;
     box-shadow:
-      0 6px 24px color-mix(in srgb, #fb7185 26%, transparent),
-      0 1px 0 color-mix(in srgb, #fff 10%, transparent) inset;
+      0 6px 24px color-mix(in srgb, #a6677a 26%, rgba(0, 0, 0, 0.45)),
+      0 1px 0 color-mix(in srgb, #fff 8%, transparent) inset;
   }
 
   .transport-actions--primary .btn-transport--go-start:hover:not(:disabled) {
     filter: brightness(1.06);
-    border-color: color-mix(in srgb, #b91c1c 75%, #f87171 25%);
+    border-color: color-mix(in srgb, #d4b0b8 45%, var(--surface-border) 55%);
     box-shadow:
-      0 8px 28px color-mix(in srgb, #fb7185 34%, transparent),
-      0 1px 0 color-mix(in srgb, #fff 18%, transparent) inset;
+      0 8px 28px color-mix(in srgb, #b07888 32%, rgba(0, 0, 0, 0.38)),
+      0 1px 0 color-mix(in srgb, #fff 14%, transparent) inset;
   }
 
   .transport-actions--primary .btn-go-start__icon {
-    color: #dc2626;
+    color: #d4aab4;
   }
 
   .transport-actions--primary .btn-go-start__time {
-    color: #b91c1c;
+    color: #e8d5d9;
   }
 
   .start-time-input {
-    background: color-mix(in srgb, var(--btn-secondary-bg) 94%, var(--palette-card));
-    border-color: color-mix(in srgb, var(--surface-border) 78%, rgba(255, 255, 255, 0.06) 22%);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--btn-secondary-bg) 96%, var(--accent-soft)) 0%,
+      color-mix(in srgb, var(--palette-card) 94%, var(--accent-soft)) 100%
+    );
+    border-color: color-mix(in srgb, var(--surface-border) 72%, var(--accent) 14%);
     color: var(--palette-deep);
     box-shadow: none;
   }
 
   .start-time-input:focus:not(:disabled) {
-    border-color: color-mix(in srgb, var(--accent) 42%, var(--surface-border) 58%);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 26%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 46%, var(--surface-border) 54%);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent);
   }
 
   .start-time-input:disabled {
     color: color-mix(in srgb, var(--ink-muted) 92%, var(--palette-deep) 8%);
-    background: color-mix(in srgb, var(--palette-soft) 38%, var(--palette-card) 62%);
-    border-color: color-mix(in srgb, var(--surface-border) 72%, transparent);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--palette-soft) 52%, var(--palette-card)) 0%,
+      color-mix(in srgb, var(--palette-soft) 68%, var(--palette-card)) 100%
+    );
+    border-color: color-mix(in srgb, var(--surface-border) 78%, transparent);
     box-shadow: none;
   }
 }
