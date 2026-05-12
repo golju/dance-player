@@ -5,7 +5,7 @@ export const STRINGS = {
   en: {
     meta_title: 'Dance Player — for classes',
     meta_description:
-      'Pick a local audio file, optional countdown, and start from a fixed second.',
+      'Pick a local audio file, optional start timer, and start from a fixed second.',
     app_short_title: 'Dance Player',
 
     brand_name: 'Dance Player',
@@ -26,7 +26,7 @@ export const STRINGS = {
     seek_back_aria: 'Rewind 5 seconds',
     seek_fwd_aria: 'Forward 5 seconds',
 
-    field_start_sec: 'Start at (sec)',
+    field_start_sec: 'Start time',
     start_short_label: 'Start',
     btn_set_current: 'Set current',
     btn_set_current_aria: 'Set start time to current playback position',
@@ -34,11 +34,10 @@ export const STRINGS = {
     start_manual_input_title:
       'Type digits (145 → 1:45), total seconds (90), or m:ss. Done/Enter applies; Esc cancels.',
 
-    delay_label_title: 'Countdown before track',
-    delay_short_label: 'Countdown',
+    delay_label_title: 'Timer before track',
+    delay_short_label: 'Timer',
     delay_none: 'none',
     delay_sec_unit: 'sec',
-    delay_chip_none: 'None',
     delay_chip_3: '3s',
     delay_chip_5: '5s',
     delay_chip_8: '8s',
@@ -49,6 +48,11 @@ export const STRINGS = {
     btn_play: 'Play',
     btn_pause: 'Pause',
     btn_stop: 'Stop',
+    btn_play_countdown_aria: 'Start with timer',
+    btn_play_countdown_aria_with_seconds: 'Start after {seconds} seconds',
+    btn_move_to_start: 'Start',
+    btn_move_to_start_aria: 'Move playhead to start time {time}',
+    btn_go_to_start_aria: 'Go to {time}',
 
     transport_track_aria: 'Position in track',
     transport_time_of: 'of',
@@ -83,7 +87,7 @@ export const STRINGS = {
     seek_back_aria: 'Μετάβαση 5 δευτ. πίσω',
     seek_fwd_aria: 'Μετάβαση 5 δευτ. μπροστά',
 
-    field_start_sec: 'Έναρξη από (δευτ.)',
+    field_start_sec: 'Ώρα έναρξης',
     start_short_label: 'Έναρξη',
     btn_set_current: 'Τρέχον',
     btn_set_current_aria: 'Ορισμός έναρξης στην τρέχουσα θέση αναπαραγωγής',
@@ -91,11 +95,10 @@ export const STRINGS = {
     start_manual_input_title:
       'Ψηφία (145 → 1:45), συνολικά δευτ. (90) ή λ:δδ. Done/Enter εφαρμογή· Esc ακύρωση.',
 
-    delay_label_title: 'Μετρήτης πριν το κομμάτι',
-    delay_short_label: 'Μετρήτης',
+    delay_label_title: 'Μετρητής πριν το κομμάτι',
+    delay_short_label: 'Μετρητής',
     delay_none: 'όχι',
     delay_sec_unit: 'δευτ.',
-    delay_chip_none: 'Όχι',
     delay_chip_3: '3δ',
     delay_chip_5: '5δ',
     delay_chip_8: '8δ',
@@ -106,6 +109,11 @@ export const STRINGS = {
     btn_play: 'Αναπαραγωγή',
     btn_pause: 'Παύση',
     btn_stop: 'Διακοπή',
+    btn_play_countdown_aria: 'Έναρξη με μετρητή',
+    btn_play_countdown_aria_with_seconds: 'Έναρξη σε {seconds} δευτερόλεπτα',
+    btn_move_to_start: 'Έναρξη',
+    btn_move_to_start_aria: 'Μετάβαση στον χρόνο έναρξης {time}',
+    btn_go_to_start_aria: 'Μετάβαση στο {time}',
 
     transport_track_aria: 'Θέση στο κομμάτι',
     transport_time_of: 'από',
@@ -140,7 +148,7 @@ export const STRINGS = {
     seek_back_aria: 'На 5 секунд назад',
     seek_fwd_aria: 'На 5 секунд вперёд',
 
-    field_start_sec: 'Старт с (сек)',
+    field_start_sec: 'Время старта',
     start_short_label: 'Старт',
     btn_set_current: 'Как сейчас',
     btn_set_current_aria: 'Подставить текущую позицию воспроизведения как время старта',
@@ -152,7 +160,6 @@ export const STRINGS = {
     delay_short_label: 'Таймер',
     delay_none: 'нет',
     delay_sec_unit: 'сек',
-    delay_chip_none: 'Нет',
     delay_chip_3: '3 с',
     delay_chip_5: '5 с',
     delay_chip_8: '8 с',
@@ -163,6 +170,11 @@ export const STRINGS = {
     btn_play: 'Играть',
     btn_pause: 'Пауза',
     btn_stop: 'Стоп',
+    btn_play_countdown_aria: 'Запустить с таймером',
+    btn_play_countdown_aria_with_seconds: 'Запустить через {seconds} секунд',
+    btn_move_to_start: 'Старт',
+    btn_move_to_start_aria: 'Перейти к времени старта {time}',
+    btn_go_to_start_aria: 'Перейти к {time}',
 
     transport_track_aria: 'Позиция в треке',
     transport_time_of: 'из',

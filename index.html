@@ -9,7 +9,7 @@
     <title>Dance Player — for classes</title>
     <meta
       name="description"
-      content="Pick a local audio file, optional countdown, and start from a fixed second."
+      content="Pick a local audio file, optional start timer, and start from a fixed second."
     />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png" />
@@ -54,7 +54,7 @@
               data-i18n-attr="aria-label:pick_file_aria"
             />
             <div class="track-panel__art" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z" />
               </svg>
             </div>
@@ -70,12 +70,12 @@
             >
               <svg
                 class="btn-ico"
-                width="20"
-                height="20"
+                width="16"
+                height="16"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
+                stroke-width="2.1"
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 aria-hidden="true"
@@ -112,63 +112,75 @@
               </div>
               <div id="time-duration" class="transport-time tabular">0:00</div>
             </div>
-            <div class="transport-actions transport-actions--compact">
-              <div class="transport-actions__seek">
-                <div class="transport-actions__cluster transport-actions__cluster--left">
-                  <button
-                    type="button"
-                    class="btn-tiny btn-tiny--seek"
-                    id="btn-seek-back"
-                    disabled
-                    data-i18n-attr="aria-label:seek_back_aria"
+            <div class="transport-actions transport-actions--primary">
+              <button
+                type="button"
+                class="btn-transport btn-transport--timer"
+                id="btn-play-countdown"
+                disabled
+                data-i18n-attr="aria-label:btn_play_countdown_aria"
+              >
+                <span class="btn-transport__label tabular" id="btn-play-countdown-label">⏱ 5s</span>
+              </button>
+
+              <button
+                type="button"
+                class="btn-transport btn-transport--play btn-play-pause"
+                id="btn-play-pause"
+                disabled
+                data-mode="play"
+                data-i18n-attr="aria-label:btn_play"
+              >
+                <span class="btn-play-pause__face btn-play-pause__face--play">
+                  <svg
+                    class="btn-ico btn-ico--play"
+                    width="28"
+                    height="28"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
                   >
-                    <span class="btn-tiny__delta tabular" data-i18n="seek_back_short">-5</span>
-                  </button>
-                </div>
-                <button type="button" class="btn-tiny btn-tiny--main btn-play-pause" id="btn-play-pause" disabled data-mode="play">
-                  <span class="btn-play-pause__face btn-play-pause__face--play">
+                    <path d="M8 5v14l11-7L8 5z" />
+                  </svg>
+                </span>
+                <span class="btn-play-pause__face btn-play-pause__face--pause">
+                  <svg
+                    class="btn-ico"
+                    width="26"
+                    height="26"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <rect x="8" y="5" width="3" height="14" rx="1.5" />
+                    <rect x="13" y="5" width="3" height="14" rx="1.5" />
+                  </svg>
+                </span>
+              </button>
+
+              <button type="button" class="btn-transport btn-transport--go-start" id="btn-go-to-start" disabled>
+                <span class="btn-transport__label btn-go-start__label tabular">
+                  <span class="btn-go-start__icon" aria-hidden="true">
                     <svg
-                      class="btn-ico btn-ico--play"
-                      width="24"
-                      height="24"
+                      class="btn-go-start__svg"
+                      width="18"
+                      height="18"
                       viewBox="0 0 24 24"
-                      fill="currentColor"
+                      fill="none"
                       aria-hidden="true"
                     >
-                      <path d="M8 5v14l11-7L8 5z" />
+                      <path
+                        d="M16.25 5.75L7.75 12l8.5 6.25"
+                        stroke="currentColor"
+                        stroke-width="2.35"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
                     </svg>
                   </span>
-                  <span class="btn-play-pause__face btn-play-pause__face--pause">
-                    <svg
-                      class="btn-ico"
-                      width="22"
-                      height="22"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <rect x="8" y="5" width="3" height="14" rx="1.5" />
-                      <rect x="13" y="5" width="3" height="14" rx="1.5" />
-                    </svg>
-                  </span>
-                </button>
-                <div class="transport-actions__cluster transport-actions__cluster--right">
-                  <button
-                    type="button"
-                    class="btn-tiny btn-tiny--seek"
-                    id="btn-seek-fwd"
-                    disabled
-                    data-i18n-attr="aria-label:seek_fwd_aria"
-                  >
-                    <span class="btn-tiny__delta tabular" data-i18n="seek_fwd_short">+5</span>
-                  </button>
-                  <button type="button" class="btn-tiny btn-tiny--stop" id="btn-stop" data-i18n-attr="aria-label:btn_stop">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <rect x="7" y="7" width="10" height="10" rx="1.5" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+                  <span class="btn-go-start__time" id="btn-go-to-start-time">0:00</span>
+                </span>
+              </button>
             </div>
           </div>
         </section>
@@ -185,9 +197,6 @@
                     class="start-time-field"
                     id="start-time-field"
                     role="group"
-                    aria-valuemin="0"
-                    aria-valuemax="3600"
-                    aria-valuenow="0"
                     aria-valuetext="0:00"
                     data-i18n-attr="aria-label:field_start_sec"
                   >
@@ -238,16 +247,18 @@
           <div class="row-2__section row-2__section--delay">
             <div class="delay-picker" role="group" aria-labelledby="delay-picker-heading">
               <span id="delay-picker-heading" class="delay-picker__label">
-                <span data-i18n="delay_short_label">Countdown</span><span class="delay-picker__colon" aria-hidden="true">:</span>
+                <span data-i18n="delay_short_label">Timer</span><span class="delay-picker__colon" aria-hidden="true">:</span>
               </span>
-              <div id="delay-chips" class="delay-picker__chips" role="radiogroup" aria-labelledby="delay-picker-heading">
-                <button type="button" class="delay-chip delay-chip--selected" role="radio" aria-checked="true" data-delay="0" data-i18n="delay_chip_none">
-                  None
-                </button>
+              <div
+                id="delay-chips"
+                class="delay-picker__chips"
+                role="radiogroup"
+                aria-labelledby="delay-picker-heading"
+              >
                 <button type="button" class="delay-chip" role="radio" aria-checked="false" tabindex="-1" data-delay="3" data-i18n="delay_chip_3">
                   3s
                 </button>
-                <button type="button" class="delay-chip" role="radio" aria-checked="false" tabindex="-1" data-delay="5" data-i18n="delay_chip_5">
+                <button type="button" class="delay-chip delay-chip--selected" role="radio" aria-checked="true" data-delay="5" data-i18n="delay_chip_5">
                   5s
                 </button>
                 <button type="button" class="delay-chip" role="radio" aria-checked="false" tabindex="-1" data-delay="8" data-i18n="delay_chip_8">

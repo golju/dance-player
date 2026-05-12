@@ -7,8 +7,8 @@ const STORAGE = {
   START_SEC: 'dancePlayer.startSec',
 };
 
-/** Allowed pause-before-play seconds (replaces 0–10 slider). */
-const DELAY_OPTIONS = [0, 3, 5, 8, 10];
+/** Allowed timer durations before playback from Start. */
+const DELAY_OPTIONS = [3, 5, 8, 10];
 
 const els = {
   file: document.getElementById('audio-file'),
@@ -21,9 +21,9 @@ const els = {
   delayChips: document.getElementById('delay-chips'),
   startSec: document.getElementById('start-sec'),
   playPause: document.getElementById('btn-play-pause'),
-  seekBack: document.getElementById('btn-seek-back'),
-  seekFwd: document.getElementById('btn-seek-fwd'),
-  stop: document.getElementById('btn-stop'),
+  goToStart: document.getElementById('btn-go-to-start'),
+  playCountdown: document.getElementById('btn-play-countdown'),
+  playCountdownLabel: document.getElementById('btn-play-countdown-label'),
   countdownStage: document.getElementById('countdown-stage'),
   countdownIdle: document.getElementById('countdown-idle'),
   countdownActive: document.getElementById('countdown-active'),
@@ -36,6 +36,7 @@ const els = {
   timeDuration: document.getElementById('time-duration'),
   transportFill: document.getElementById('transport-fill'),
   btnSetStartCurrent: document.getElementById('btn-set-start-current'),
+  goToStartTime: document.getElementById('btn-go-to-start-time'),
 };
 
 /** @type {string | null} */
@@ -50,35 +51,48 @@ let countEndMs = 0;
 /** @type {number} */
 let countdownTotalSec = 0;
 
+/** @type {number} — позиция воспроизведения (сек) в момент запуска отсчёта таймера */
+let countdownResumeAtSec = 0;
+
 /** @type {number | null} */
 let lastDisplayedSec = null;
 
 /** @type {boolean} */
 let isScrubbing = false;
 
-/** @type {boolean} */
-let resumeAfterUserPause = false;
+function playCountdownAriaLabel(seconds) {
+  const s = getStrings(getCurrentLocale());
+  const tpl = s.btn_play_countdown_aria_with_seconds;
+  return typeof tpl === 'string' ? tpl.replace('{seconds}', String(seconds)) : s.btn_play_countdown_aria;
+}
 
 function syncActionButtons() {
   const hasSrc = !!els.audio.src;
   const counting = tick !== null;
   const playing = !els.audio.paused;
   els.playPause.disabled = !hasSrc;
+  if (els.goToStart) els.goToStart.disabled = !hasSrc || getDuration() <= 0;
+  if (els.playCountdown) els.playCountdown.disabled = !hasSrc;
   const showPause = playing || counting;
   els.playPause.dataset.mode = showPause ? 'pause' : 'play';
   const s = getStrings(getCurrentLocale());
   els.playPause.setAttribute('aria-label', showPause ? s.btn_pause : s.btn_play);
 
-  const seekOk = hasSrc && getDuration() > 0;
-  els.seekBack.disabled = !seekOk;
-  els.seekFwd.disabled = !seekOk;
+  const delaySec = getDelaySec();
+  if (els.playCountdownLabel) els.playCountdownLabel.textContent = `⏱ ${delaySec}s`;
+  if (els.playCountdown) els.playCountdown.setAttribute('aria-label', playCountdownAriaLabel(delaySec));
+  syncGoToStartButton();
 }
 
-function seekBySeconds(delta) {
-  const d = getDuration();
-  if (d <= 0) return;
-  els.audio.currentTime = clamp(els.audio.currentTime + delta, 0, d);
-  syncTransport();
+function syncGoToStartButton() {
+  if (!els.goToStart) return;
+  const t = formatStartReadout(getCommittedStartSec());
+  if (els.goToStartTime) els.goToStartTime.textContent = t;
+  const s = getStrings(getCurrentLocale());
+  const ariaTpl = s.btn_go_to_start_aria;
+  const aria = typeof ariaTpl === 'string' ? ariaTpl.replace(/\{time\}/g, t) : `Go to ${t}`;
+  els.goToStart.setAttribute('aria-label', aria);
+  els.goToStart.title = aria;
 }
 
 function parseStartSecFromField() {
@@ -110,13 +124,12 @@ function syncStartTimeUI() {
     const lbl = formatStartReadout(v);
     if (els.startReadoutSr) els.startReadoutSr.textContent = lbl;
     if (els.startTimeField) {
-      els.startTimeField.setAttribute('aria-valuemax', String(Math.floor(max)));
-      els.startTimeField.setAttribute('aria-valuenow', String(v));
       els.startTimeField.setAttribute('aria-valuetext', lbl);
     }
   }
 
   syncStartFieldAvailability();
+  syncGoToStartButton();
 }
 
 function getStartSecMax() {
@@ -256,6 +269,7 @@ function bindStartField() {
         /* ignore */
       }
     });
+    syncGoToStartButton();
   });
 
   els.startSec.addEventListener('blur', () => {
@@ -315,7 +329,8 @@ function clamp(n, min, max) {
 
 function nearestDelayOption(sec) {
   const raw = parseInt(String(sec), 10);
-  const x = clamp(Number.isFinite(raw) ? Math.round(raw) : 0, 0, 10);
+  if (!Number.isFinite(raw) || raw <= 0) return 5;
+  const x = clamp(Math.round(raw), 3, 10);
   let best = DELAY_OPTIONS[0];
   let bestDist = Math.abs(best - x);
   for (const o of DELAY_OPTIONS) {
@@ -329,9 +344,9 @@ function nearestDelayOption(sec) {
 }
 
 function getDelaySec() {
-  if (!els.delayChips) return 0;
+  if (!els.delayChips) return 5;
   const sel = els.delayChips.querySelector('.delay-chip--selected');
-  if (!sel) return 0;
+  if (!sel) return 5;
   const v = parseInt(sel.getAttribute('data-delay'), 10);
   return DELAY_OPTIONS.includes(v) ? v : nearestDelayOption(v);
 }
@@ -383,8 +398,7 @@ function enterCountdownMode(totalSec) {
   updateCountdownRing(countdownTotalSec * 1000);
   setCountdownDisplayedSeconds(totalSec);
   lastDisplayedSec = totalSec;
-  const startSec = startSecForPlayback();
-  if (els.countdownPillTime) els.countdownPillTime.textContent = formatTime(startSec);
+  if (els.countdownPillTime) els.countdownPillTime.textContent = formatTime(countdownResumeAtSec);
 }
 
 function setCountdownIdle() {
@@ -528,7 +542,6 @@ function bindFile() {
       els.trackName.textContent = getStrings(getCurrentLocale()).track_none;
       els.trackName.removeAttribute('title');
       els.audio.removeAttribute('src');
-      resumeAfterUserPause = false;
       clampStartSecToMax();
       syncTransport();
       syncActionButtons();
@@ -540,7 +553,6 @@ function bindFile() {
     void els.audio.load();
     els.trackName.textContent = file.name;
     els.trackName.title = file.name;
-    resumeAfterUserPause = false;
     syncStartFieldAvailability();
     syncTransport();
     syncActionButtons();
@@ -553,16 +565,13 @@ function startSecForPlayback() {
   return Math.round(clamp(parseStartSecFromField(), 0, max));
 }
 
-async function beginPlay(startSec) {
-  const t = Math.round(clamp(startSec, 0, 360000));
-  els.audio.currentTime = t;
-  resumeAfterUserPause = false;
+async function resumeAfterCountdown() {
+  setCountdownIdle();
   try {
     await els.audio.play();
   } catch {
     /* iOS может отклонить без жеста — кнопка уже жест */
   }
-  setCountdownIdle();
   syncTransport();
   syncActionButtons();
 }
@@ -580,48 +589,46 @@ function countdownLoop() {
     if (left !== lastDisplayedSec) {
       lastDisplayedSec = left;
       setCountdownDisplayedSeconds(left);
-      if (els.countdownPillTime) els.countdownPillTime.textContent = formatTime(startSecForPlayback());
+      if (els.countdownPillTime) els.countdownPillTime.textContent = formatTime(countdownResumeAtSec);
     }
   }
 
   if (Date.now() >= countEndMs) {
     tick = null;
     lastDisplayedSec = null;
-    const startSec = startSecForPlayback();
-    void beginPlay(startSec);
+    void resumeAfterCountdown();
     return;
   }
 
   tick = requestAnimationFrame(countdownLoop);
 }
 
-async function armPlayback() {
+async function playNow() {
   if (!els.audio.src) return;
-
-  if (resumeAfterUserPause && tick === null && els.audio.paused) {
-    try {
-      await els.audio.play();
-    } catch {
-      /* ignore */
-    }
-    resumeAfterUserPause = false;
-    syncActionButtons();
-    return;
-  }
-
-  resumeAfterUserPause = false;
   clearTick();
-  const delaySec = getDelaySec();
-  const startSec = startSecForPlayback();
+  setCountdownIdle();
+  try {
+    await els.audio.play();
+  } catch {
+    /* iOS может отклонить без жеста */
+  }
+  syncTransport();
+  syncActionButtons();
+}
+
+function playWithCountdown() {
+  if (!els.audio.src) return;
+  const d = getDuration();
+  if (d <= 0) return;
+  let delaySec = getDelaySec();
+  if (!DELAY_OPTIONS.includes(delaySec)) delaySec = nearestDelayOption(delaySec);
+  delaySec = Math.max(3, delaySec);
+
+  countdownResumeAtSec = Math.round(clamp(els.audio.currentTime, 0, d));
 
   persist();
   els.audio.pause();
-
-  if (delaySec <= 0) {
-    await beginPlay(startSec);
-    return;
-  }
-
+  clearTick();
   countEndMs = Date.now() + delaySec * 1000;
   enterCountdownMode(delaySec);
   tick = requestAnimationFrame(countdownLoop);
@@ -633,24 +640,40 @@ function pausePlayback() {
   if (tick !== null) {
     clearTick();
     setCountdownIdle();
-    resumeAfterUserPause = false;
     syncActionButtons();
     return;
   }
   if (els.audio.paused) return;
   els.audio.pause();
-  resumeAfterUserPause = true;
   syncActionButtons();
 }
 
 function hardStop() {
   clearTick();
-  resumeAfterUserPause = false;
   els.audio.pause();
   els.audio.currentTime = startSecForPlayback();
   setCountdownIdle();
   syncTransport();
   syncActionButtons();
+}
+
+async function performGoToStart() {
+  if (!els.audio.src || getDuration() <= 0) return;
+  const resumePlayback = !els.audio.paused;
+  if (tick !== null) {
+    clearTick();
+    setCountdownIdle();
+  }
+  els.audio.currentTime = startSecForPlayback();
+  syncTransport();
+  syncActionButtons();
+  if (resumePlayback) {
+    try {
+      await els.audio.play();
+    } catch {
+      /* iOS may reject */
+    }
+  }
 }
 
 function bindDelayChips() {
@@ -662,6 +685,7 @@ function bindDelayChips() {
     if (!btn || !root.contains(btn)) return;
     selectDelayChip(/** @type {HTMLElement} */ (btn));
     persist();
+    syncActionButtons();
   });
 
   root.addEventListener('keydown', (e) => {
@@ -674,6 +698,7 @@ function bindDelayChips() {
       selectDelayChip(next);
       next.focus();
       persist();
+      syncActionButtons();
       return;
     }
     if (e.code === 'ArrowLeft' || e.code === 'ArrowUp') {
@@ -682,12 +707,14 @@ function bindDelayChips() {
       selectDelayChip(next);
       next.focus();
       persist();
+      syncActionButtons();
       return;
     }
     if (e.code === 'Enter' || e.code === 'Space') {
       e.preventDefault();
       selectDelayChip(chips[i]);
       persist();
+      syncActionButtons();
     }
   });
 }
@@ -709,11 +736,15 @@ function bindControls() {
 
   els.playPause.addEventListener('click', () => {
     if (tick !== null || !els.audio.paused) pausePlayback();
-    else void armPlayback();
+    else void playNow();
   });
-  els.seekBack.addEventListener('click', () => seekBySeconds(-5));
-  els.seekFwd.addEventListener('click', () => seekBySeconds(5));
-  els.stop.addEventListener('click', hardStop);
+  if (els.playCountdown) {
+    els.playCountdown.addEventListener('click', () => {
+      if (tick !== null) pausePlayback();
+      else playWithCountdown();
+    });
+  }
+  if (els.goToStart) els.goToStart.addEventListener('click', () => void performGoToStart());
 
   els.audio.addEventListener('play', syncActionButtons);
   els.audio.addEventListener('pause', syncActionButtons);
@@ -737,7 +768,6 @@ function bindControls() {
   els.audio.addEventListener('timeupdate', syncTransport);
 
   els.audio.addEventListener('ended', () => {
-    resumeAfterUserPause = false;
     setCountdownIdle();
     syncTransport();
     syncActionButtons();
@@ -756,6 +786,12 @@ function bindControls() {
       const ae = document.activeElement;
       if (ae instanceof Element && ae.closest('#delay-chips')) return;
       if (ae instanceof Element && ae.closest('#btn-set-start-current')) return;
+      if (
+        ae === els.playPause ||
+        ae === els.playCountdown ||
+        ae === els.goToStart
+      )
+        return;
       const t = ae?.tagName;
       if (t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT') return;
       const el = document.activeElement;
@@ -774,7 +810,7 @@ function bindControls() {
         pausePlayback();
         return;
       }
-      if (!els.playPause.disabled) void armPlayback();
+      if (!els.playPause.disabled) void playNow();
     }
     if (e.code === 'Escape') {
       if (document.activeElement === els.startSec) return;
