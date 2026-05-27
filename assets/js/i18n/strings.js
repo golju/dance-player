@@ -42,6 +42,8 @@ export const STRINGS = {
     delay_chip_5: '5s',
     delay_chip_8: '8s',
     delay_chip_10: '10s',
+    delay_sound: 'Sound',
+    delay_sound_aria: 'Countdown sound',
 
     range_label_max: '10 sec',
 
@@ -103,6 +105,8 @@ export const STRINGS = {
     delay_chip_5: '5δ',
     delay_chip_8: '8δ',
     delay_chip_10: '10δ',
+    delay_sound: 'Ήχος',
+    delay_sound_aria: 'Ήχος αντίστροφης μέτρησης',
 
     range_label_max: '10 δευτ.',
 
@@ -164,6 +168,8 @@ export const STRINGS = {
     delay_chip_5: '5 с',
     delay_chip_8: '8 с',
     delay_chip_10: '10 с',
+    delay_sound: 'Звук',
+    delay_sound_aria: 'Звук обратного отсчёта',
 
     range_label_max: '10 сек',
 

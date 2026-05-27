@@ -5,6 +5,7 @@ import { applyLang, getCurrentLocale, getStrings, readStoredLang } from './i18n/
 const STORAGE = {
   DELAY_SEC: 'dancePlayer.delaySec',
   START_SEC: 'dancePlayer.startSec',
+  COUNTDOWN_SOUND: 'dancePlayer.countdownSound',
 };
 
 /** Allowed timer durations before playback from Start. */
@@ -19,6 +20,7 @@ const els = {
   startTimeField: document.getElementById('start-time-field'),
   startReadoutSr: document.getElementById('start-readout-sr'),
   delayChips: document.getElementById('delay-chips'),
+  countdownSound: document.getElementById('countdown-sound'),
   startSec: document.getElementById('start-sec'),
   playPause: document.getElementById('btn-play-pause'),
   goToStart: document.getElementById('btn-go-to-start'),
@@ -59,6 +61,90 @@ let lastDisplayedSec = null;
 
 /** @type {boolean} */
 let isScrubbing = false;
+
+/** @type {AudioContext | null} */
+let countdownAudioCtx = null;
+
+function isCountdownSoundEnabled() {
+  return !!els.countdownSound?.checked;
+}
+
+function ensureCountdownAudioContext() {
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if (!Ctx) return null;
+  if (!countdownAudioCtx) countdownAudioCtx = new Ctx();
+  if (countdownAudioCtx.state === 'suspended') void countdownAudioCtx.resume();
+  return countdownAudioCtx;
+}
+
+function playCountdownBeep(isFinal = false) {
+  if (!isCountdownSoundEnabled()) return;
+  const ctx = ensureCountdownAudioContext();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+    const duration = isFinal ? 0.34 : 0.17;
+    const pulseFreq = isFinal ? 104 : 87;
+    const shimmerFreq = isFinal ? 880 : 740;
+    const pulsePeak = isFinal ? 0.36 : 0.28;
+    const shimmerPeak = isFinal ? 0.095 : 0.072;
+    const master = ctx.createGain();
+    master.connect(ctx.destination);
+
+    const pulse = ctx.createOscillator();
+    const pulseFilter = ctx.createBiquadFilter();
+    const pulseGain = ctx.createGain();
+    pulse.type = 'sine';
+    pulse.frequency.setValueAtTime(pulseFreq * 1.12, now);
+    pulse.frequency.exponentialRampToValueAtTime(pulseFreq * 0.76, now + duration);
+    pulseFilter.type = 'lowpass';
+    pulseFilter.frequency.value = 240;
+    pulseFilter.Q.value = 0.75;
+    pulseGain.gain.setValueAtTime(0, now);
+    pulseGain.gain.linearRampToValueAtTime(pulsePeak, now + 0.009);
+    pulseGain.gain.exponentialRampToValueAtTime(0.0005, now + duration);
+    pulse.connect(pulseFilter);
+    pulseFilter.connect(pulseGain);
+    pulseGain.connect(master);
+
+    const mid = ctx.createOscillator();
+    const midGain = ctx.createGain();
+    mid.type = 'sine';
+    mid.frequency.setValueAtTime(pulseFreq * 3.4, now);
+    mid.frequency.exponentialRampToValueAtTime(pulseFreq * 2.35, now + duration * 0.72);
+    midGain.gain.setValueAtTime(0, now);
+    midGain.gain.linearRampToValueAtTime(pulsePeak * 0.24, now + 0.006);
+    midGain.gain.exponentialRampToValueAtTime(0.0005, now + duration * 0.68);
+    mid.connect(midGain);
+    midGain.connect(master);
+
+    const shimmer = ctx.createOscillator();
+    const shimmerFilter = ctx.createBiquadFilter();
+    const shimmerGain = ctx.createGain();
+    shimmer.type = 'sine';
+    shimmer.frequency.setValueAtTime(shimmerFreq * 1.01, now);
+    shimmer.frequency.exponentialRampToValueAtTime(shimmerFreq * 0.92, now + duration * 0.5);
+    shimmerFilter.type = 'lowpass';
+    shimmerFilter.frequency.setValueAtTime(isFinal ? 1450 : 1180, now);
+    shimmerFilter.frequency.exponentialRampToValueAtTime(520, now + duration * 0.58);
+    shimmerFilter.Q.value = 0.5;
+    shimmerGain.gain.setValueAtTime(0, now);
+    shimmerGain.gain.linearRampToValueAtTime(shimmerPeak, now + 0.014);
+    shimmerGain.gain.exponentialRampToValueAtTime(0.0004, now + duration * 0.62);
+    shimmer.connect(shimmerFilter);
+    shimmerFilter.connect(shimmerGain);
+    shimmerGain.connect(master);
+
+    pulse.start(now);
+    pulse.stop(now + duration + 0.05);
+    mid.start(now);
+    mid.stop(now + duration * 0.72 + 0.05);
+    shimmer.start(now);
+    shimmer.stop(now + duration * 0.62 + 0.05);
+  } catch {
+    /* Web Audio may be unavailable */
+  }
+}
 
 function playCountdownAriaLabel(seconds) {
   const s = getStrings(getCurrentLocale());
@@ -312,6 +398,7 @@ function clampStartSecToMax() {
 function loadStored() {
   const d = localStorage.getItem(STORAGE.DELAY_SEC);
   const s = localStorage.getItem(STORAGE.START_SEC);
+  const sound = localStorage.getItem(STORAGE.COUNTDOWN_SOUND);
   if (d !== null && els.delayChips) {
     const n = nearestDelayOption(parseInt(d, 10));
     const chip = els.delayChips.querySelector(`[data-delay="${n}"]`);
@@ -320,6 +407,9 @@ function loadStored() {
   if (s !== null) {
     const x = clamp(parseFloat(s), 0, 360000);
     if (!Number.isNaN(x)) els.startSec.value = formatStartReadout(Math.round(x));
+  }
+  if (sound !== null && els.countdownSound) {
+    els.countdownSound.checked = sound === '1' || sound === 'true';
   }
 }
 
@@ -364,6 +454,9 @@ function selectDelayChip(btn) {
 function persist() {
   localStorage.setItem(STORAGE.DELAY_SEC, String(getDelaySec()));
   localStorage.setItem(STORAGE.START_SEC, String(getCommittedStartSec()));
+  if (els.countdownSound) {
+    localStorage.setItem(STORAGE.COUNTDOWN_SOUND, els.countdownSound.checked ? '1' : '0');
+  }
 }
 
 function clearTick() {
@@ -398,6 +491,7 @@ function enterCountdownMode(totalSec) {
   updateCountdownRing(countdownTotalSec * 1000);
   setCountdownDisplayedSeconds(totalSec);
   lastDisplayedSec = totalSec;
+  playCountdownBeep(totalSec === 1);
   if (els.countdownPillTime) els.countdownPillTime.textContent = formatTime(countdownResumeAtSec);
 }
 
@@ -589,6 +683,7 @@ function countdownLoop() {
     if (left !== lastDisplayedSec) {
       lastDisplayedSec = left;
       setCountdownDisplayedSeconds(left);
+      playCountdownBeep(left === 1);
       if (els.countdownPillTime) els.countdownPillTime.textContent = formatTime(countdownResumeAtSec);
     }
   }
@@ -679,6 +774,13 @@ async function performGoToStart() {
 function bindDelayChips() {
   const root = els.delayChips;
   if (!root) return;
+
+  if (els.countdownSound) {
+    els.countdownSound.addEventListener('change', () => {
+      persist();
+      if (els.countdownSound.checked) ensureCountdownAudioContext();
+    });
+  }
 
   root.addEventListener('click', (e) => {
     const btn = e.target.closest('.delay-chip');

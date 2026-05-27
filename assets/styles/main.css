@@ -796,6 +796,114 @@ input[type='file'] {
   border-color: color-mix(in srgb, var(--accent) 64%, var(--field-border) 36%);
 }
 
+.delay-picker__sound {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  margin: 0;
+  padding: 0.425rem 0.72rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #fff 92%, var(--accent-soft)) 0%,
+    color-mix(in srgb, #f1f5f9 96%, var(--accent-soft)) 100%
+  );
+  color: color-mix(in srgb, var(--palette-deep) 91%, var(--accent-deep) 9%);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: -0.02em;
+  line-height: 1.22;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  transition:
+    background 0.14s ease,
+    border-color 0.14s ease,
+    color 0.14s ease,
+    box-shadow 0.14s ease,
+    transform 0.12s ease;
+}
+
+.delay-picker__sound:hover {
+  border-color: color-mix(in srgb, var(--field-border) 48%, var(--accent) 32%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #fff 88%, var(--accent-soft)) 0%,
+    color-mix(in srgb, #eef2ff 94%, var(--accent-soft)) 100%
+  );
+}
+
+.delay-picker__sound:has(.delay-picker__sound-input:checked) {
+  border-color: color-mix(in srgb, var(--accent) 58%, var(--field-border) 42%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent-soft) 42%, #fff) 0%,
+    color-mix(in srgb, var(--accent-soft) 28%, #f1f5f9) 100%
+  );
+  color: color-mix(in srgb, var(--accent-deep) 72%, var(--palette-deep) 28%);
+}
+
+.delay-picker__sound-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.delay-picker__sound-box {
+  position: relative;
+  flex-shrink: 0;
+  width: 0.92rem;
+  height: 0.92rem;
+  border-radius: 0.24rem;
+  border: 1.5px solid color-mix(in srgb, var(--field-border) 72%, var(--accent) 28%);
+  background: color-mix(in srgb, #fff 94%, var(--accent-soft));
+  transition:
+    border-color 0.14s ease,
+    background 0.14s ease,
+    box-shadow 0.14s ease;
+}
+
+.delay-picker__sound-box::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 0.28rem;
+  height: 0.48rem;
+  border: solid currentColor;
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -50%) rotate(45deg) scale(0.4);
+  opacity: 0;
+  transition:
+    transform 0.14s ease,
+    opacity 0.14s ease;
+}
+
+.delay-picker__sound-input:checked + .delay-picker__sound-box {
+  border-color: color-mix(in srgb, var(--accent) 72%, var(--field-border) 28%);
+  background: color-mix(in srgb, var(--accent) 88%, #fff 12%);
+  color: #fff;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.delay-picker__sound-input:checked + .delay-picker__sound-box::after {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(45deg) scale(1);
+}
+
+.delay-picker__sound-input:focus-visible + .delay-picker__sound-box {
+  outline: 2px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  outline-offset: 2px;
+}
+
 .row-2 .field-label {
   margin-bottom: 0;
 }
@@ -2332,6 +2440,38 @@ input[type='range']::-moz-range-thumb {
 
   .delay-chip--selected:hover:not(:disabled) {
     border-color: color-mix(in srgb, var(--accent) 64%, var(--surface-border) 36%);
+  }
+
+  .delay-picker__sound {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--btn-secondary-bg) 88%, var(--accent-soft)) 0%,
+      color-mix(in srgb, var(--btn-secondary-bg) 96%, var(--accent-soft)) 100%
+    );
+    color: color-mix(in srgb, var(--palette-deep) 88%, var(--accent-deep) 12%);
+  }
+
+  .delay-picker__sound:hover {
+    border-color: color-mix(in srgb, var(--accent) 40%, var(--surface-border) 60%);
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--btn-secondary-bg) 82%, var(--accent-soft)) 0%,
+      color-mix(in srgb, var(--btn-secondary-bg) 92%, var(--accent-soft)) 100%
+    );
+  }
+
+  .delay-picker__sound:has(.delay-picker__sound-input:checked) {
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent-soft) 38%, var(--palette-card)) 0%,
+      color-mix(in srgb, var(--accent-soft) 22%, var(--btn-secondary-bg)) 100%
+    );
+    color: color-mix(in srgb, var(--accent-deep) 68%, var(--palette-deep) 32%);
+  }
+
+  .delay-picker__sound-box {
+    border-color: color-mix(in srgb, var(--surface-border) 78%, var(--accent) 22%);
+    background: color-mix(in srgb, var(--palette-card) 92%, var(--accent-soft));
   }
 
   .start-picker__label {
